@@ -73,7 +73,7 @@ export default class Flambeau {
     const sourceActionFunctions = this.actionSetIDsToActionFunctions[actionSetID];
     let connectedActionFunctions = {};
 
-    for (let actionID of Object.keys(sourceActionFunctions) {
+    for (let actionID of Object.keys(sourceActionFunctions)) {
       connectedActionFunctions[actionID] = (actionPayload) => {
         this.dispatch(actionSetID, actionID, actionPayload);
       };
