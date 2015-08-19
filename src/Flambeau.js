@@ -74,8 +74,19 @@ export default class Flambeau {
     let connectedActionFunctions = {};
 
     for (let actionID of Object.keys(sourceActionFunctions)) {
+      const sourceActionFunction = sourceActionFunctions[actionID];
+
       connectedActionFunctions[actionID] = (actionPayload) => {
-        this.dispatch(actionSetID, actionID, actionPayload);
+        // Synchronous
+        if (sourceActionFunction.length <= 1) {
+          this.dispatch(actionSetID, actionID, sourceActionFunction(actionPayload));
+        }
+        // Asychronous
+        else {
+          sourceActionFunction(actionPayload, (newPayload, actionID, actionSetID = actionSetID) => {
+            this.dispatch(actionSetID, actionID, newPayload);
+          });
+        }
       };
     }
 
