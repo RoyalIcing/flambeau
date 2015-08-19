@@ -1,0 +1,27 @@
+{
+  "name": "flambeau",
+  "version": "0.1.0",
+  "description": "Lightweight flux library",
+  "main": "lib/Flambeau.js",
+  "scripts": {
+    "build": "babel src --out-dir lib",
+    "clean": "rm -Rf lib",
+    "prepublish": "npm run clean && npm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BurntCaramel/flambeau.git"
+  },
+  "keywords": [
+    "flux",
+    "react",
+    "immutable",
+    "reducer"
+  ],
+  "author": "Patrick Smith",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/BurntCaramel/flambeau/issues"
+  },
+  "homepage": "https://github.com/BurntCaramel/flambeau#readme"
+}
