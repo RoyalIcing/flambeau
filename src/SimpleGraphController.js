@@ -1,17 +1,28 @@
-/**
- * Designed to be compatible with Immutable.js
- */
 export default class SimpleGraphController {
   constructor() {
-    this.graph = {};
+    this._idToState = {};
+    //this.introspection = {};
+  }
+
+  setUp(id, { state/*, introspection*/ }) {
+    this._idToState[id] = state;
+
+    /*for (introspectionID of Object.keys(introspection)) {
+      this.introspection[introspectionID] = (payload) => {
+        // Pass store’s current state along
+        introspection[introspectionID](this.get(id), payload);
+      );
+    }*/
+
+    return this;
   }
 
   get(id) {
-    return graph[id];
+    return this._idToState[id];
   }
 
-  set(id, value) {
-    this.graph[id] = value;
+  set(id, state) {
+    this._idToState[id] = state;
 
     return this;
   }

@@ -1,12 +1,15 @@
 
-import findActionResponder from './findActionResponder';
+import callAction from './callAction';
+import { ACTION_TYPE, INTROSPECTION_TYPE } from './types';
 import SimpleGraphController from './SimpleGraphController';
+
+const notFoundValue = {};
 
 
 export default class Flambeau {
-  constructor(graphController = new SimpleGraphController()) {
+  constructor(graph = new SimpleGraphController()) {
     this.resources = {};
-    this.graphController = graphController;
+    this.graph = graph;
     this.actionSetIDsToActionFunctions = {};
     this.listeners = [];
   }
@@ -17,7 +20,9 @@ export default class Flambeau {
       context
     };
 
-    this.graphController.set = this.graphController.set(id, reducer.new(context));
+    this.graph = this.graph.setUp(id, {
+      state: reducer.getInitialState(context)
+    });
   }
 
   subscribe(callback) {
@@ -36,74 +41,115 @@ export default class Flambeau {
     });
   }
 
-  dispatch(actionSetID, actionID, actionPayload) {
+  dispatch({ actionSetID, actionID, payload }) {
     let idsChanged = [];
 
-    function callActionResponder(actionResponder, initialValue, context) {
-      return actionResponder(initialValue, actionPayload, context);
-    }
-
-    for (let id of Object.keys(this.resources)) {
+    Object.keys(this.resources).forEach(id => {
       const resource = this.resources[id];
 
-      const actionResponder = findActionResponder(resource.reducer, actionSetID, actionID, callActionResponder);
-      if (actionResponder) {
-        const initialValue = this.graphController.get(id);
-        const newValue = callActionResponder(actionResponder, initialValue, resource.context);
-        this.graphController = this.graphController.set(id, newValue);
+      const result = callAction({
+        responder: resource.reducer,
+        type: ACTION_TYPE,
+        initialValue: this.graph.get(id),
+        context: resource.context,
+        payload,
+        notFoundValue,
+        actionSetID,
+        actionID
+      });
 
+      if (result !== notFoundValue) {
+        this.graph = this.graph.set(id, result);
         idsChanged.push(id);
       }
-    }
+    });
 
-    for (let id of idsChanged) {
+    idsChanged.forEach(id => {
       this.listeners.forEach((callback) => {
         callback(id);
       });
-    }
+    });
   }
 
   registerActionSets(actionSets) {
-    for (let actionSetID of Object.keys(actionSets)) {
+    Object.keys(actionSets).forEach(actionSetID => {
       this.actionSetIDsToActionFunctions[actionSetID] = actionSets[actionSetID];
-    }
+    });
   }
 
   getConnectedActionSet(actionSetID) {
     const sourceActionFunctions = this.actionSetIDsToActionFunctions[actionSetID];
     let connectedActionFunctions = {};
 
-    for (let actionID of Object.keys(sourceActionFunctions)) {
+    Object.keys(sourceActionFunctions).forEach(actionID => {
       const sourceActionFunction = sourceActionFunctions[actionID];
 
-      connectedActionFunctions[actionID] = (actionPayload) => {
-        // Synchronous
+      connectedActionFunctions[actionID] = (payload) => {
+        // Synchronous, immediately dispatched
         if (sourceActionFunction.length <= 1) {
-          this.dispatch(actionSetID, actionID, sourceActionFunction(actionPayload));
+          payload = sourceActionFunction(payload);
+          this.dispatch({ actionSetID, actionID, payload });
         }
-        // Asychronous
+        // Asychronous, delegates the dispatching
         else {
-          sourceActionFunction(actionPayload, (newPayload, actionID, actionSetID = actionSetID) => {
-            this.dispatch(actionSetID, actionID, newPayload);
-          });
+          const dispatch = ({ payload, actionSetID = actionSetID, actionID }) => {
+            this.dispatch({ actionSetID, actionID, payload });
+          }
+
+          const getConsensus = ({ viewpointID, payload, combine, booleanOr = false, booleanAnd = false }) => {
+            if (booleanOr) {
+              combine = (combined, current) => {
+                return combined || current;
+              };
+            }
+            else if (booleanAnd) {
+              combine = (combined, current) => {
+                return combined && current;
+              };
+            }
+
+            return Object.keys(this.resources).reduce((combinedValue, resourceID, i) => {
+              const resource = this.resources[resourceID];
+
+              let currentValue = callAction({
+                responder: resource.reducer,
+                type: INTROSPECTION_TYPE,
+                initialValue: this.graph.get(id),
+                defaultValue: notFoundValue,
+                context: resource.context,
+                actionID: viewpointID,
+                actionSetID,
+                payload,
+                notFoundValue
+              });
+
+              if (i === 0) {
+                combinedValue = currentValue;
+              }
+              else {
+                combinedValue = combine(combinedValue, currentValue);
+              }
+
+              return combinedValue;
+            }, undefined);
+          }
+
+          sourceActionFunction(payload, { dispatch, getConsensus });
         }
       };
-    }
+    });
 
     return connectedActionFunctions;
   }
 
   getConnectedActionSets(actionSetIDs) {
-    let connectedActionSets = {};
-
-    for (let actionSetID of Object.keys(actionSets)) {
+    return actionSetIDs.reduce((connectedActionSets, actionSetID) => {
       connectedActionSets[actionSetID] = this.getConnectedActionSet(actionSetID);
-    }
-
-    return connectedActionSets;
+      return connectedActionSets;
+    }, {});
   }
 
   get(id) {
-    this.graphController.get(id);
+    return this.graph.get(id);
   }
 }
