@@ -1,8 +1,8 @@
 {
   "name": "flambeau",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "description": "Lightweight flux library",
-  "main": "lib/Flambeau.js",
+  "main": "lib/index.js",
   "scripts": {
     "build": "babel src --out-dir lib",
     "clean": "rm -Rf lib",
