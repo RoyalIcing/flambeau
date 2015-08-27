@@ -18,7 +18,12 @@ export default class SimpleGraphController {
   }
 
   get(id) {
-    return this._idToState[id];
+    if (typeof id === 'undefined') {
+      return this._idToState;
+    }
+    else {
+      return this._idToState[id];
+    }
   }
 
   set(id, state) {

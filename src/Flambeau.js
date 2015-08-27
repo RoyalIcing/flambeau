@@ -25,32 +25,22 @@ export default class Flambeau {
     });
   }
 
-  subscribe(callback) {
-    this.listeners.push(callback);
-
-    return () => {
-      this.listeners.splice(this.listeners.indexOf(callback), 1);
-    };
-  }
-
-  subscribeTo(id, callback) {
-    this.subscribe((idChanged) => {
-      if (id == idChanged) {
-        callback();
-      }
+  attachReducers(idToReducers, idToContexts = {}) {
+    Object.keys(idToReducers).forEach(id => {
+      this.attachReducer(id, idToReducers[id], idToContexts[id]);
     });
   }
 
   dispatch({ actionSetID, actionID, payload }) {
-    let idsChanged = [];
+    let idsChanged = {};
 
-    Object.keys(this.resources).forEach(id => {
-      const resource = this.resources[id];
+    Object.keys(this.resources).forEach(resourceID => {
+      const resource = this.resources[resourceID];
 
       const result = callAction({
         responder: resource.reducer,
         type: ACTION_TYPE,
-        initialValue: this.graph.get(id),
+        initialValue: this.graph.get(resourceID),
         context: resource.context,
         payload,
         notFoundValue,
@@ -59,15 +49,13 @@ export default class Flambeau {
       });
 
       if (result !== notFoundValue) {
-        this.graph = this.graph.set(id, result);
-        idsChanged.push(id);
+        this.graph = this.graph.set(resourceID, result);
+        idsChanged[resourceID] = true;
       }
     });
 
-    idsChanged.forEach(id => {
-      this.listeners.forEach((callback) => {
-        callback(id);
-      });
+    this.listeners.forEach((callback) => {
+      callback(idsChanged);
     });
   }
 
@@ -92,7 +80,8 @@ export default class Flambeau {
         }
         // Asychronous, delegates the dispatching
         else {
-          const dispatch = ({ payload, actionSetID = actionSetID, actionID }) => {
+          const defaultActionSetID = actionSetID;
+          const dispatch = ({ actionSetID = defaultActionSetID, actionID, payload }) => {
             this.dispatch({ actionSetID, actionID, payload });
           }
 
@@ -110,11 +99,10 @@ export default class Flambeau {
 
             return Object.keys(this.resources).reduce((combinedValue, resourceID, i) => {
               const resource = this.resources[resourceID];
-
               let currentValue = callAction({
                 responder: resource.reducer,
                 type: INTROSPECTION_TYPE,
-                initialValue: this.graph.get(id),
+                initialValue: this.graph.get(resourceID),
                 defaultValue: notFoundValue,
                 context: resource.context,
                 actionID: viewpointID,
@@ -149,7 +137,42 @@ export default class Flambeau {
     }, {});
   }
 
+  registerAndConnectActionSets(actionSets) {
+    this.registerActionSets(actionSets);
+    return this.getConnectedActionSets(Object.keys(actionSets));
+  }
+
   get(id) {
-    return this.graph.get(id);
+    if (typeof id === 'undefined') {
+      return this.graph.get();
+    }
+    else if (typeof id === 'string') {
+      return this.graph.get(id);
+    }
+    else {
+      let idToState = {};
+      Object.keys(id).forEach(id => {
+        idToState[id] = this.graph.get(id);
+      });
+      return idToState;
+    }
+  }
+
+  subscribe(callback) {
+    this.listeners.push(callback);
+
+    return () => {
+      this.listeners.splice(this.listeners.indexOf(callback), 1);
+    };
+  }
+
+  subscribeTo(id, callback) {
+    this.subscribe((idsChanged) => {
+      if (idsChanged[id]) {
+        callback({
+          [id]: this.get(id)
+        });
+      }
+    });
   }
 }
