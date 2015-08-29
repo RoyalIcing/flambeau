@@ -169,14 +169,4 @@ export default class Flambeau {
       this.listeners.splice(this.listeners.indexOf(callback), 1);
     };
   }
-
-  subscribeTo(id, callback) {
-    this.subscribe((idsChanged) => {
-      if (idsChanged[id]) {
-        callback({
-          [id]: this.get(id)
-        });
-      }
-    });
-  }
 }
