@@ -75,7 +75,11 @@ export default class Flambeau {
       connectedActionFunctions[actionID] = (payload) => {
         // Synchronous, immediately dispatched
         if (sourceActionFunction.length <= 1) {
-          payload = sourceActionFunction(payload);
+          const result = sourceActionFunction(payload);
+          // Allow empty action declarations
+          if (typeof result !== 'undefined') {
+            payload = result;
+          }
           this.dispatch({ actionSetID, actionID, payload });
         }
         // Asychronous, delegates the dispatching
