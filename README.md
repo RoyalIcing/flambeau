@@ -107,6 +107,7 @@ export const introspection = {
   shouldFetchPosts({ reddit }) {}
 }
 
+// Asynchronous action, receiving extra arguments to send other actions or poll reducers for a consensus.
 export function fetchPostsIfNeeded({ reddit }, { currentActionSet, getConsensus }) {
   if (getConsensus({
     introspectionID: 'shouldFetchPosts',
