@@ -63,6 +63,8 @@ export default class Flambeau {
     Object.keys(actionSets).forEach(actionSetID => {
       this.actionSetIDsToActionFunctions[actionSetID] = actionSets[actionSetID];
     });
+
+    delete this.allConnectedActionSets;
   }
 
   getConnectedActionSet(actionSetID) {
@@ -88,6 +90,9 @@ export default class Flambeau {
           const dispatch = ({ actionSetID = defaultActionSetID, actionID, payload }) => {
             this.dispatch({ actionSetID, actionID, payload });
           }
+
+          const allActionSets = this.getAllConnectedActionSets();
+          const currentActionSet = allActionSets[actionSetID];
 
           const getConsensus = ({ viewpointID, payload, combine, booleanOr = false, booleanAnd = false }) => {
             if (booleanOr) {
@@ -126,7 +131,7 @@ export default class Flambeau {
             }, undefined);
           }
 
-          sourceActionFunction(payload, { dispatch, getConsensus });
+          sourceActionFunction(payload, { dispatch, currentActionSet, allActionSets, getConsensus });
         }
       };
     });
@@ -139,6 +144,16 @@ export default class Flambeau {
       connectedActionSets[actionSetID] = this.getConnectedActionSet(actionSetID);
       return connectedActionSets;
     }, {});
+  }
+
+  getAllConnectedActionSets() {
+    if (this.allConnectedActionSets) {
+      return this.allConnectedActionSets;
+    }
+    else {
+      this.allConnectedActionSets = this.getConnectedActionSets(Object.keys(this.actionSetIDsToActionFunctions));
+      return this.allConnectedActionSets;
+    }
   }
 
   registerAndConnectActionSets(actionSets) {

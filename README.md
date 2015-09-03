@@ -21,15 +21,12 @@ export function addTodo({ text }) {
   return { text };
 }
 
-export function importTodosFromURL({ URL }, { dispatch }) {
+export function importTodosFromURL({ URL }, { currentActionSet }) {
   fetch(URL)
   .then(response => response.json())
   .then(items => {
     items.forEach(item => {
-      dispatch({
-        actionID: 'addTodo',
-        payload: addTodo({ text: item.text })
-      });
+      currentActionSet.addTodo({ text: item.text });
     });
   })
 }
