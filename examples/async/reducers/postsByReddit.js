@@ -12,7 +12,7 @@ export function PostsActions(state, { isAction, isIntrospection, actionID, paylo
     });
   }
   else if (isIntrospection) {
-    return shouldFetchPosts(state, payload);
+    return forwardTo(posts, state[payload.reddit] || posts.getInitialState());
   }
 }
 

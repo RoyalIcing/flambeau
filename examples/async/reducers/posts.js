@@ -1,7 +1,7 @@
 export function getInitialState() {
   return {
     isFetching: false,
-    didInvalidate: false,
+    didInvalidate: true,
     items: []
   };
 }
@@ -27,5 +27,17 @@ export const PostsActions = {
       items: posts,
       lastUpdated: receivedAt
     });
+  },
+
+  introspection: {
+    shouldFetchPosts(state, { reddit }) {
+      if (!state) {
+        return true;
+      } else if (state.isFetching) {
+        return false;
+      } else {
+        return state.didInvalidate;
+      }
+    }
   }
 }

@@ -23,9 +23,7 @@ function fetchPosts({ reddit }, { currentActionSet }) {
 }
 
 export const introspection = {
-  shouldFetchPosts({ reddit }) {
-    return arguments[0];
-  }
+  shouldFetchPosts({ reddit }) {}
 }
 
 export function fetchPostsIfNeeded({ reddit }, { currentActionSet, getConsensus }) {
@@ -35,5 +33,5 @@ export function fetchPostsIfNeeded({ reddit }, { currentActionSet, getConsensus 
     booleanOr: true
   })) {
     fetchPosts({ reddit }, { currentActionSet });
-  };
+  }
 }
