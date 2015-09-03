@@ -7,6 +7,10 @@ const notFoundValue = {};
 
 
 export default class Flambeau {
+  /**
+   * Creates a new Flambeau store
+   * @param  {graph controller} graph The object graph that reducers are attached to.
+   */
   constructor(graph = new SimpleGraphController()) {
     this.resources = {};
     this.graph = graph;
@@ -14,6 +18,13 @@ export default class Flambeau {
     this.listeners = [];
   }
 
+  /**
+   * Attach a set of reducer functions.
+   *
+   * @param  {String} id      The unique identifier for this particular reducer
+   * @param  {Object} reducer The set of reducer functions, most likely made using `import * as ...`
+   * @param  {Object} props   The unique attributes to customize the reducer
+   */
   attachReducer(id, reducer, props) {
     this.resources[id] = {
       reducer,
@@ -25,6 +36,12 @@ export default class Flambeau {
     });
   }
 
+  /**
+   * Attach multiple reducers, with ids as keys, and reducer function sets as values.
+   *
+   * @param  {Object} idToReducers An object mapping identifiers to reducer function sets
+   * @param  {Object} idToProps    (Optional) the unique attributes for each particular reducer
+   */
   attachReducers(idToReducers, idToProps = {}) {
     Object.keys(idToReducers).forEach(id => {
       this.attachReducer(id, idToReducers[id], idToProps[id]);
@@ -59,6 +76,11 @@ export default class Flambeau {
     });
   }
 
+  /**
+   * Add actions that will be connected to reducers.
+   *
+   * @param  {Object} actionSets An object mapping action set identifiers to action functions
+   */
   registerActionSets(actionSets) {
     Object.keys(actionSets).forEach(actionSetID => {
       this.actionSetIDsToActionFunctions[actionSetID] = actionSets[actionSetID];
@@ -67,6 +89,12 @@ export default class Flambeau {
     delete this.allConnectedActionSets;
   }
 
+  /**
+   * Get a set of actions, connected to this store ready to dispatch to the reducers.
+   *
+   * @param  {String} actionSetID The unique identifier for the action set
+   * @return {Object}             The connected action functions
+   */
   getConnectedActionSet(actionSetID) {
     const sourceActionFunctions = this.actionSetIDsToActionFunctions[actionSetID];
     let connectedActionFunctions = {};
@@ -138,6 +166,12 @@ export default class Flambeau {
     return connectedActionFunctions;
   }
 
+  /**
+   * Get multiple actions sets, connected to this store ready to dispatch to the reducers.
+   *
+   * @param  {Array} actionSetIDs The unique identifiers of the action sets.
+   * @return {Object}             The action set identifiers to connected action function sets.
+   */
   getConnectedActionSets(actionSetIDs) {
     return actionSetIDs.reduce((connectedActionSets, actionSetID) => {
       connectedActionSets[actionSetID] = this.getConnectedActionSet(actionSetID);
@@ -145,6 +179,11 @@ export default class Flambeau {
     }, {});
   }
 
+  /**
+   * Get all known action sets, connected to this store.
+   *
+   * @return {Object} The action set identifiers to action function sets.
+   */
   getAllConnectedActionSets() {
     if (this.allConnectedActionSets) {
       return this.allConnectedActionSets;
@@ -155,11 +194,23 @@ export default class Flambeau {
     }
   }
 
+  /**
+   * Convenience method to register and connect action sets in one go.
+   *
+   * @param  {Object} actionSets An object mapping action set identifiers to action functions
+   * @return {Object}            The action set identifiers to connected action function sets.
+   */
   registerAndConnectActionSets(actionSets) {
     this.registerActionSets(actionSets);
     return this.getConnectedActionSets(Object.keys(actionSets));
   }
 
+  /**
+   * Get the state for a particular reducer.
+   *
+   * @param  {String} id The unique identifier for a particular reducer
+   * @return {Any}    The state value of the reducer at the current time
+   */
   get(id) {
     if (typeof id === 'undefined') {
       return this.graph.get();
@@ -176,6 +227,12 @@ export default class Flambeau {
     }
   }
 
+  /**
+   * Subscribe to reducer updates.
+   *
+   * @param  {Function} callback A function accepting an array of changed reducer identifiers
+   * @return {Function}          A function used to unsubscribe when finished
+   */
   subscribe(callback) {
     this.listeners.push(callback);
 

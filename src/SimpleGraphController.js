@@ -1,18 +1,13 @@
+/**
+ * A very simple object graph
+ */
 export default class SimpleGraphController {
   constructor() {
     this._idToState = {};
-    //this.introspection = {};
   }
 
-  setUp(id, { state/*, introspection*/ }) {
+  setUp(id, { state }) {
     this._idToState[id] = state;
-
-    /*for (introspectionID of Object.keys(introspection)) {
-      this.introspection[introspectionID] = (payload) => {
-        // Pass store’s current state along
-        introspection[introspectionID](this.get(id), payload);
-      );
-    }*/
 
     return this;
   }
