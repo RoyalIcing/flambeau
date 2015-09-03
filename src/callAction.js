@@ -15,19 +15,8 @@ export default function callAction({ responder, type, initialValue, actionSetID,
 
 function findActionResponder({ responder, type, actionSetID, actionID, notFoundValue }) {
   if (responder[actionSetID]) {
-    let typeResponder;
-    if (type === ACTION_TYPE) {
-      typeResponder = responder[actionSetID];
-    }
-    else if (responder[actionSetID][type]) {
-      typeResponder = responder[actionSetID][type];
-    }
-    else {
-      return notFoundValue;
-    }
-
     // Has forwarding function for entire type
-    if (isFunction(typeResponder)) {
+    if (isFunction(responder[actionSetID])) {
       return (initialValue, payload, props) => {
         function forwardTo(responder, initialValue) {
           return callAction({
@@ -49,8 +38,21 @@ function findActionResponder({ responder, type, actionSetID, actionID, notFoundV
         }
       };
     }
-    else if (typeResponder[actionID]) {
-      return typeResponder[actionID];
+    else {
+      let typeResponder;
+      if (type === ACTION_TYPE) {
+        typeResponder = responder[actionSetID];
+      }
+      else if (responder[actionSetID][type]) {
+        typeResponder = responder[actionSetID][type];
+      }
+      else {
+        return notFoundValue;
+      }
+
+      if (typeResponder[actionID]) {
+        return typeResponder[actionID];
+      }
     }
   }
 
