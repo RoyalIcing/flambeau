@@ -121,7 +121,7 @@ export default class Flambeau {
           const allActionSets = this.getAllConnectedActionSets();
           const currentActionSet = allActionSets[actionSetID];
 
-          const getConsensus = ({ viewpointID, payload, combine, booleanOr = false, booleanAnd = false }) => {
+          const getConsensus = ({ introspectionID, payload, combine, booleanOr = false, booleanAnd = false }) => {
             if (booleanOr) {
               combine = (combined, current) => {
                 return combined || current;
@@ -133,29 +133,34 @@ export default class Flambeau {
               };
             }
 
-            return Object.keys(this.resources).reduce((combinedValue, resourceID, i) => {
+            const combinedValue = Object.keys(this.resources).reduce((combinedValue, resourceID, i) => {
               const resource = this.resources[resourceID];
-              let currentValue = callAction({
+              const currentValue = callAction({
                 responder: resource.reducer,
                 type: INTROSPECTION_TYPE,
                 initialValue: this.graph.get(resourceID),
-                defaultValue: notFoundValue,
                 props: resource.props,
-                actionID: viewpointID,
+                actionID: introspectionID,
                 actionSetID,
                 payload,
                 notFoundValue
               });
 
-              if (i === 0) {
-                combinedValue = currentValue;
-              }
-              else {
-                combinedValue = combine(combinedValue, currentValue);
+              if (currentValue !== notFoundValue) {
+                if (combinedValue === notFoundValue) {
+                  return currentValue;
+                }
+                else {
+                  return combine(combinedValue, currentValue);
+                }
               }
 
               return combinedValue;
-            }, undefined);
+            }, notFoundValue);
+
+            if (combinedValue !== notFoundValue) {
+              return combinedValue;
+            }
           }
 
           sourceActionFunction(payload, { currentActionSet, allActionSets, getConsensus });
