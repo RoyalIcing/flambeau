@@ -86,11 +86,6 @@ export default class Flambeau {
         }
         // Asychronous, delegates the dispatching
         else {
-          const defaultActionSetID = actionSetID;
-          const dispatch = ({ actionSetID = defaultActionSetID, actionID, payload }) => {
-            this.dispatch({ actionSetID, actionID, payload });
-          }
-
           const allActionSets = this.getAllConnectedActionSets();
           const currentActionSet = allActionSets[actionSetID];
 
@@ -131,7 +126,7 @@ export default class Flambeau {
             }, undefined);
           }
 
-          sourceActionFunction(payload, { dispatch, currentActionSet, allActionSets, getConsensus });
+          sourceActionFunction(payload, { currentActionSet, allActionSets, getConsensus });
         }
       };
     });
