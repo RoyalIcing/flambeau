@@ -72,6 +72,10 @@ export default class Flambeau {
     let connectedActionFunctions = {};
 
     Object.keys(sourceActionFunctions).forEach(actionID => {
+      if (actionID === 'introspection') {
+        return;
+      }
+
       const sourceActionFunction = sourceActionFunctions[actionID];
 
       connectedActionFunctions[actionID] = (payload) => {
