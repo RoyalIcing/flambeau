@@ -15,14 +15,3 @@ export function PostsActions(state, { isAction, isIntrospection, actionID, paylo
     return forwardTo(posts, state[payload.reddit] || posts.getInitialState());
   }
 }
-
-function shouldFetchPosts(state, { reddit }) {
-  const posts = state.postsByReddit[reddit];
-  if (!posts) {
-    return true;
-  } else if (posts.isFetching) {
-    return false;
-  } else {
-    return posts.didInvalidate;
-  }
-}
