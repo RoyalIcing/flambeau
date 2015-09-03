@@ -8,7 +8,7 @@ export function getInitialState() {
 export function PostsActions(state, { isAction, isIntrospection, actionID, payload, forwardTo }) {
   if (isAction) {
     return Object.assign({}, state, {
-      [payload.reddit]: forwardTo(posts, state[payload.reddit])
+      [payload.reddit]: forwardTo(posts, state[payload.reddit] || posts.getInitialState())
     });
   }
   else if (isIntrospection) {
