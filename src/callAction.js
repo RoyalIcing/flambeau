@@ -2,10 +2,10 @@ import isFunction from './isFunction';
 import { ACTION_TYPE, INTROSPECTION_TYPE } from './types';
 
 
-export default function callAction({ responder, type, initialValue, actionSetID, actionID, payload, notFoundValue, context }) {
+export default function callAction({ responder, type, initialValue, actionSetID, actionID, payload, notFoundValue, props }) {
   const responderFunction = findActionResponder({ responder, type, actionSetID, actionID, notFoundValue });
   if (responderFunction !== notFoundValue) {
-    return responderFunction(initialValue, payload, { context });
+    return responderFunction(initialValue, payload, { props });
   }
   else {
     return notFoundValue;
@@ -28,18 +28,18 @@ function findActionResponder({ responder, type, actionSetID, actionID, notFoundV
 
     // Has forwarding function for entire type
     if (isFunction(typeResponder)) {
-      return (initialValue, payload, context) => {
+      return (initialValue, payload, props) => {
         function forwardTo(responder, initialValue) {
           return callAction({
             notFoundValue: initialValue,
-            responder, type, initialValue, actionSetID, actionID, payload, context
+            responder, type, initialValue, actionSetID, actionID, payload, props
           });
         }
 
         const result = responder[actionSetID](initialValue, {
           isAction: (type === ACTION_TYPE),
           isIntrospection: (type === INTROSPECTION_TYPE),
-          type, actionID, payload, context, forwardTo
+          type, actionID, payload, props, forwardTo
         });
         if (typeof result === 'undefined') {
           return notFoundValue;

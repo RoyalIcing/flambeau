@@ -14,20 +14,20 @@ export default class Flambeau {
     this.listeners = [];
   }
 
-  attachReducer(id, reducer, context) {
+  attachReducer(id, reducer, props) {
     this.resources[id] = {
       reducer,
-      context
+      props
     };
 
     this.graph = this.graph.setUp(id, {
-      state: reducer.getInitialState(context)
+      state: reducer.getInitialState(props)
     });
   }
 
-  attachReducers(idToReducers, idToContexts = {}) {
+  attachReducers(idToReducers, idToProps = {}) {
     Object.keys(idToReducers).forEach(id => {
-      this.attachReducer(id, idToReducers[id], idToContexts[id]);
+      this.attachReducer(id, idToReducers[id], idToProps[id]);
     });
   }
 
@@ -41,7 +41,7 @@ export default class Flambeau {
         responder: resource.reducer,
         type: ACTION_TYPE,
         initialValue: this.graph.get(resourceID),
-        context: resource.context,
+        props: resource.props,
         payload,
         notFoundValue,
         actionSetID,
@@ -112,7 +112,7 @@ export default class Flambeau {
                 type: INTROSPECTION_TYPE,
                 initialValue: this.graph.get(resourceID),
                 defaultValue: notFoundValue,
-                context: resource.context,
+                props: resource.props,
                 actionID: viewpointID,
                 actionSetID,
                 payload,
