@@ -1,15 +1,11 @@
 import fetch from 'isomorphic-fetch';
 
 
-export function invalidateReddit({ reddit }) {
-  return arguments[0];
-}
+export function invalidateReddit({ reddit }) {}
 
-function requestPosts({ reddit }) {
-  return arguments[0];
-}
+export function requestPosts({ reddit }) {}
 
-function receivePosts({ reddit, json }) {
+export function receivePosts({ reddit, json }) {
   return {
     reddit,
     posts: json.data.children.map(child => child.data),
@@ -17,18 +13,13 @@ function receivePosts({ reddit, json }) {
   };
 }
 
-function fetchPosts({ reddit }, { dispatch }) {
-  dispatch({
-    actionID: 'requestPosts',
-    payload: requestPosts({ reddit })
-  });
+function fetchPosts({ reddit }, { currentActionSet }) {
+  currentActionSet.requestPosts({ reddit });
 
   fetch(`http://www.reddit.com/r/${reddit}.json`)
     .then(response => response.json())
-    .then(json => dispatch({
-      actionID: 'receivePosts',
-      payload: receivePosts({ reddit, json })
-    }));
+    .then(json => currentActionSet.receivePosts({ reddit, json }))
+  ;
 }
 
 export const introspection = {
@@ -37,14 +28,12 @@ export const introspection = {
   }
 }
 
-export function fetchPostsIfNeeded({ reddit }, { dispatch, getConsensus }) {
+export function fetchPostsIfNeeded({ reddit }, { currentActionSet, getConsensus }) {
   if (getConsensus({
     introspectionID: 'shouldFetchPosts',
     payload: { reddit },
     booleanOr: true
   })) {
-    //currentActionSet.fetchPosts({ reddit });
-
-    fetchPosts({ reddit }, { dispatch });
+    fetchPosts({ reddit }, { currentActionSet });
   };
 }
