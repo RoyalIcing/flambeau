@@ -15,14 +15,10 @@ flambeau.attachReducers(reducers, {
 // ACTIONS
 export const connectedActions = flambeau.registerAndConnectActionSets(actions);
 
-export function subscribe(id) {
-  return flambeau.subscribe(id);
+export function subscribe(callback) {
+  return flambeau.subscribe(callback);
 }
 
 export function get(id) {
   return flambeau.get(id);
-}
-
-export function getGraph() {
-  return flambeau.graph;
 }

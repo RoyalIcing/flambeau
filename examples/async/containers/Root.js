@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import AsyncApp from './AsyncApp';
-import { subscribe, get, getGraph } from '../store';
+import { subscribe, get } from '../store';
 
 
 export function mapStateToProps({ selectedReddit, postsByReddit }) {
