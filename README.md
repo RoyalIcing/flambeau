@@ -70,3 +70,52 @@ export function get(id) {
   return flambeau.get(id);
 }
 ```
+
+## Introspection
+
+Introspection with the `getConsensus()` function allows actions to request data from reducers whilst keeping them completely decoupled. Action creators have no knowledge of the specifics of reducers’ state.
+
+```javascript
+import fetch from 'isomorphic-fetch';
+
+// Simple action
+export function invalidateReddit({ reddit }) {}
+
+export function requestPosts({ reddit }) {}
+
+// Action that transforms its requested payload
+export function receivePosts({ reddit, json }) {
+  return {
+    reddit,
+    posts: json.data.children.map(child => child.data),
+    receivedAt: Date.now()
+  };
+}
+
+// Helper function that is not exported
+function fetchPosts({ reddit }, { currentActionSet }) {
+  currentActionSet.requestPosts({ reddit });
+
+  fetch(`http://www.reddit.com/r/${reddit}.json`)
+    .then(response => response.json())
+    .then(json => currentActionSet.receivePosts({ reddit, json }))
+  ;
+}
+
+// Methods of introspection that this action set requests that reducers implement.
+export const introspection = {
+  shouldFetchPosts({ reddit }) {}
+}
+
+export function fetchPostsIfNeeded({ reddit }, { currentActionSet, getConsensus }) {
+  if (getConsensus({
+    introspectionID: 'shouldFetchPosts',
+    payload: { reddit },
+    booleanOr: true
+  })) {
+    fetchPosts({ reddit }, { currentActionSet });
+  };
+}
+```
+
+See the [async example](examples/async) for a full example of introspection and the features of Flambeau.
