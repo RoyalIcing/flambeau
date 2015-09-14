@@ -16,10 +16,13 @@ Just use the exported function’s name to identify the action, and a destructur
 ```javascript
 // actions/TodoListActions.js
 
-export function addTodo({ text }) {
-  return { text };
-}
+import fetch from 'isomorphic-fetch';
 
+// Simple action, which documents its payload, unlike a constant.
+export function addTodo({ text }) {}
+
+// Asynchronous action. Just add a second argument and use `currentActionSet` to
+// send any number of actions.
 export function importTodosFromURL({ URL }, { currentActionSet }) {
   fetch(URL)
   .then(response => response.json())
