@@ -50,7 +50,7 @@ export const TodoListActions = {
 
 ## Using with Redux
 
-```
+```javascript
 import { createStore, applyMiddleware } from 'redux';
 import { createRootReducer, connectActionSetsToStore } from 'flambeau/redux';
 import actionSets from '../actions';
