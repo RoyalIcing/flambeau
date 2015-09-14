@@ -9,9 +9,9 @@ Just use the exported function’s name to identify the action, and a destructur
 - Allows reducers to be **reused**, using props to customize.
 - **Bulk forwarding of actions** within reducers to allow composition of reducers, such as in collections or other hierarchies.
 - Action **introspection methods to allow encapsulation** of reducers’ internal state.
-- Get a **consensus for async actions**, such as whether something needs loading or not, by polling reducers using introspection methods. This reduces coupling between reducers and actions, allowing greater code reuse.
+- Get a **consensus for async actions**, such as whether something needs loading or not, by polling reducers using introspection methods. This removes coupling between reducers and actions, allowing greater code reuse.
 
-## Using Flambeau
+## Actions
 
 ```javascript
 // actions/TodoListActions.js
@@ -31,6 +31,8 @@ export function importTodosFromURL({ URL }, { currentActionSet }) {
 }
 ```
 
+## Reducer
+
 ```javascript
 // reducers/TodoListReducer.js
 
@@ -38,6 +40,7 @@ export function getInitialState() {
   return [];
 }
 
+// Namespaced to action sets
 export const TodoListActions = {
   addTodo(state, { text }) {
     return state.concat({ text });
@@ -45,29 +48,21 @@ export const TodoListActions = {
 }
 ```
 
-```javascript
-// store.js
+## Using with Redux
 
-import Flambeau from 'flambeau';
-import reducers from './reducers';
-import actions from './actions';
+```
+import { createStore, applyMiddleware } from 'redux';
+import { createRootReducer, connectActionSetsToStore } from 'flambeau/redux';
+import actionSets from '../actions';
+import reducers from '../reducers';
 
+const createStoreWithMiddleware = applyMiddleware(
+  // All your favorite redux middleware
+)(createStore);
 
-const flambeau = new Flambeau();
-
-// REDUCERS
-flambeau.attachReducers(reducers);
-
-// ACTIONS
-export const connectedActions = flambeau.registerAndConnectActionSets(actions);
-
-export function subscribe(callback) {
-  return flambeau.subscribe(callback);
-}
-
-export function get(id) {
-  return flambeau.get(id);
-}
+const rootReducer = createRootReducer({ reducers, idToProps: {} });
+export const store = createStoreWithMiddleware(rootReducer, initialState);
+export const connectedActionSets = connectActionSetsToStore({ actionSets, store });
 ```
 
 ## Introspection
@@ -118,4 +113,4 @@ export function fetchPostsIfNeeded({ reddit }, { currentActionSet, getConsensus 
 }
 ```
 
-See the [async example](examples/async) for a full example of introspection and the features of Flambeau.
+See the [async redux example](examples/async-redux) for a full example of introspection and the features of Flambeau.
