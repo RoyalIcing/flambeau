@@ -1,6 +1,6 @@
 {
   "name": "flambeau",
-  "version": "0.4.2",
+  "version": "0.5.0",
   "description": "Lightweight flux library",
   "scripts": {
     "build": "babel src --out-dir lib",
@@ -15,7 +15,8 @@
     "flux",
     "react",
     "immutable",
-    "reducer"
+    "reducer",
+    "redux"
   ],
   "author": "Patrick Smith",
   "license": "Apache-2.0",
