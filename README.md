@@ -1,16 +1,16 @@
 # Flambeau
-A lightweight flux library with opinions:
+A lightweight Flux (& Redux compatible) library with opinions:
 
-### Pure Function Actions
+### Declarative Action Creators
 - Better structured actions with **namespacing** and **no UPPERCASE_CONSTANTS**.
 Just use an exported function to name the action, and a destructured object to document the payload.
 - **No switch statements** to handle actions, just declare a function with the same name as the action’s function, inside an exported object with the same name as the action set.
-- **Async action support built-in**, and with convenient dispatching to other actions.
+- **Async action support built-in**, with convenient dispatching of other actions.
 
-### Reducers with Props
+### Reusable Reducers
 - **Reducers** instead of stores, using pure functions to allow clear data flow and immutability.
-- Reducer can be **reused, using props to customize** initial state or response to actions.
-- **Bulk forwarding of action sets** within reducers to allow composition of reducers, such as in collections or other hierarchies.
+- Reducer can be **reused, using props to customize** initial state or the response to actions.
+- **Bulk forwarding of action sets** within reducers to allow easy composition of reducers, such as in collections or other hierarchies.
 
 ### Reducer Encapsulation
 - **Introspection methods to allow encapsulation** of reducers’ internal state.
