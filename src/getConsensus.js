@@ -2,7 +2,7 @@ import callAction from './callAction';
 import { INTROSPECTION_TYPE } from './types';
 import notFoundValue from './notFoundValue';
 
-export default ({ resources, states }) => ({ introspectionID, payload, combine, booleanOr = false, booleanAnd = false }) => {
+export default ({ resources, states }) => ({ actionSetID }) => ({ introspectionID, payload, combine, booleanOr = false, booleanAnd = false }) => {
   if (booleanOr) {
     combine = (combined, current) => {
       return combined || current;

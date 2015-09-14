@@ -46,8 +46,8 @@ function getConnectedActionSet({ actionSet, actionSetID, getAllConnectedActionSe
  * @param  {Array} actionSetIDs The unique identifiers of the action sets.
  * @return {Object}             The action set identifiers to connected action function sets.
  */
-export default function connectActionSets({ actionSets, dispatch, getConsensus }) {
-  return actionSets.keys().reduce((connectedActionSets, actionSetID) => {
+export default function connectActionSets({ actionSets, dispatch, getConsensusForActionSet }) {
+  return Object.keys(actionSets).reduce((connectedActionSets, actionSetID) => {
     connectedActionSets[actionSetID] = getConnectedActionSet({
       actionSet: actionSets[actionSetID],
       actionSetID,
@@ -55,8 +55,9 @@ export default function connectActionSets({ actionSets, dispatch, getConsensus }
         return connectedActionSets
       },
       dispatch,
-      getConsensus
-    );
+      getConsensus: getConsensusForActionSet({ actionSetID })
+    });
+
     return connectedActionSets;
   }, {});
 }
