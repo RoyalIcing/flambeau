@@ -6,11 +6,11 @@ A lightweight, Redux-compatible Flux library with opinions:
 ```javascript
 export function addTodo({ text }) {} // No constants, self-documenting payload
 ```
-- Better organized actions with simple **namespacing** using action sets.
+- Better organized actions with **namespacing** using action sets.
 - **Async action support built-in**, with convenient dispatching of other actions.
 
 ### Reusable reducers
-- **No switch statements** to handle actions, just declare a function with the same name as the action’s function, within an exported object with the same name as the action set.
+- **No switch statements** to handle actions, just declare a function with the same name as the action’s function, within an exported object named after the action set.
 ```javascript
 export const TodoListActions = {
   addTodo(state, { text }) {
