@@ -2,14 +2,17 @@
 A lightweight Flux (& Redux compatible) library with opinions:
 
 ### Declarative Action Creators
-- Better structured actions with **namespacing** and **no UPPERCASE_CONSTANTS**.
-Just use an exported function to name the action, and a destructured object to document the payload.
-- **No switch statements** to handle actions, just declare a function with the same name as the action’s function, inside an exported object with the same name as the action set.
+```javascript
+export function addTodo({ text }) {} // No constants, self-documenting payload
+```
+- **No UPPERCASE_CONSTANTS**. Just use an exported function to name the action, and a destructured object to document the payload.
+- Better organized actions with simple **namespacing** using action sets.
 - **Async action support built-in**, with convenient dispatching of other actions.
 
 ### Reusable Reducers
-- **Reducers** instead of stores, using pure functions to allow clear data flow and immutability.
-- Reducer can be **reused, using props to customize** initial state or the response to actions.
+- **No switch statements** to handle actions, just declare a function with the same name as the action’s function, inside an exported object with the same name as the action set.
+- **Redux-style reducers** instead of stores, using pure functions to allow clear data flow and immutability.
+- **Reusable reducers, using props to customize** the initial state or response to actions.
 - **Bulk forwarding of action sets** within reducers to allow easy composition of reducers, such as in collections or other hierarchies.
 
 ### Reducer Encapsulation
@@ -135,4 +138,4 @@ export function fetchPostsIfNeeded({ reddit }, { currentActionSet, getConsensus 
 
 ## Full Example
 
-See the [async redux example](examples/async-redux) for a full example of introspection and the features of Flambeau.
+See the [async redux demo example](examples/async-redux) for a full example of introspection and the features of Flambeau.
