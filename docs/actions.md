@@ -5,7 +5,7 @@
 Action sets group multiple action creators into one namespace.
 
 The recommended way to declare an action set is to create a file with the name
-of action set, e.g. *TodoActions.js*. Then declare action creators and
+of action set, e.g. *TodoListActions.js*. Then declare action creators and
 introspection methods, which are detailed below.
 
 ## Action Creators
@@ -52,16 +52,12 @@ or `allActionSets.myActionSetID.myActionID(payload)`.
 import fetch from 'isomorphic-fetch';
 
 export function addTodo({ text }) {}
-export function didTodosImportFromURL({ text }) {}
+export function addTodosFromURL({ items }) {}
 
 export function importTodosFromURL({ URL }, { currentActionSet, allActionSets }) {
   fetch(URL)
   .then(response => response.json())
-  .then(items => {
-    items.forEach(item => {
-      currentActionSet.addTodo({ text: item.text });
-    });
-  })
+  .then(items => currentActionSet.addTodosFromURL({ items }));
 }
 ```
 
