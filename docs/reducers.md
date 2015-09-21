@@ -33,7 +33,7 @@ The only difference from action creators is the current state is passed as the
 first argument.
 
 ```javascript
-export const TodoActions = {
+export const TodoListActions = {
   addTodo(state, { text }) {
     return state.concat({ text });
   }
