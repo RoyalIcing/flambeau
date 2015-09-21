@@ -30,7 +30,7 @@ export function fetchPostsIfNeeded({ reddit }, { currentActionSet, getConsensus 
   if (getConsensus({
     introspectionID: 'shouldFetchPosts',
     payload: { reddit },
-    booleanOr: true
+    combine: { booleanOr: true }
   })) {
     fetchPosts({ reddit }, { currentActionSet });
   }
