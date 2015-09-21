@@ -15,8 +15,10 @@ The initial state in Flambeau is determined by a declaration of the exported
 function `getInitialState`. The props are passed as the first argument.
 
 ```javascript
-export function getInitialState({ initialTodos = [] }) {
-  return initialTodos;
+export function getInitialState({ initialItems = [] }) {
+  return {
+    items: initialItems
+  };
 }
 ```
 
@@ -47,8 +49,119 @@ Forwarding actions is possible, especially easily done in bulk per action set.
 To forward an action, declare an action set as a function instead of an object.
 When an action from this set is dispatched, this function will be called with
 the following parameters.
-- `type`
-- `actionID`
-- `payload`
-- `props`
-- `forwardTo()`
+- `type`: either ACTION_TYPE or INTROSPECTION_TYPE.
+- `actionID`: the identifier of the action or introspection method.
+- `payload`: the payload being dispatched.
+- `props`: the props of this particular reducer.
+- `forwardTo()`: Call this to use another reducer on a subset of your state.
+
+```javascript
+// TodoItemActions.js
+
+export function changeText({ text, index }) {}
+export function changeCompleted({ isCompleted, index }) {}
+```
+
+```javascript
+// TodoListReducer.js
+import TodoItemReducer from './TodoItemReducer';
+
+export function getInitialState() { return []; }
+
+export function TodoItemActions(state, { type, actionID, payload, props, forwardTo }) {
+  const { index } = payload;
+  state = Object.assign({}, state, {
+    items: state.items.concat() // Make a copy of the entire array
+  });
+  state.items[index] = forwardTo({ responder: TodoItemReducer, initialState: state.items[index] });
+
+  return state;
+}
+```
+
+```javascript
+// TodoItemReducer.js
+
+export const TodoItemActions = {
+  changeText(item, { text, index }) {
+    return Object.assign({}, item, { text });
+  },
+
+  changeCompleted(item, { isCompleted, index }) {
+    return Object.assign({}, item, { isCompleted });
+  }
+}
+```
+
+## Introspection
+
+Introspection allows different actions to be taken depending on the store’s
+state. The difference from the normal method of directly checking the store is
+an interface is created that the reducers implement to the specifics of its
+state’s structure. It is completely encapsulated within the reducer, allowing
+better coupling between actions and reducers.
+
+Say a todo list allows importing items from online. The action creator may want
+to only load data if its hasn’t already. Because action creators are stateless,
+this bit of information will be stored in a reducer somewhere. Introspection
+methods allow this to be declared by an action set.
+
+```javascript
+// TodoListActions.js
+import fetch from 'isomorphic-fetch';
+
+export function addTodosFromURL({ items, URL }) {}
+
+function importTodosFromURL({ URL }, { currentActionSet }) {
+  fetch(URL)
+  .then(response => response.json())
+  .then(items => currentActionSet.addTodosFromURL({ items }));
+}
+
+export function importTodosFromURLIfNeeded({ URL }, { currentActionSet, getConsensus }) {
+  if (getConsensus({
+    introspectionID: 'hasImportedFromURL',
+    payload: { URL },
+    booleanOr: true
+  })) {
+    // This function is not exported as a public action, instead used directly.
+    importTodosFromURL({ URL }, { currentActionSet });
+  }
+}
+
+export const introspection = {
+  hasImportedFromURL({ URL }) {}
+};
+```
+
+```javascript
+// TodoListReducer.js
+export function getInitialState({ initialItems = [] }) {
+  return {
+    items: initialItems,
+    importedURLs: {}
+  };
+}
+
+export const TodoListActions = {
+  addTodosFromURL(state, { items, URL }) {
+    // Other reducers might have returned false from hasImportedFromURL()
+    if (state.importedURLs[URL]) {
+      return;
+    }
+
+    return Object.assign({}, state, {
+      importedURLs: Object.assign({}, state.importedURLs, { [URL]: true }),
+      items: state.items.concat(items)
+    });
+  },
+
+  introspection: {
+    hasImportedFromURL(state, { URL }) {
+      return Boolean(
+        state.importedURLs[URL]
+      );
+    }
+  }
+};
+```
