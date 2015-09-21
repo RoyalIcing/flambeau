@@ -11,7 +11,7 @@ export default ({ resources, states }) => ({ actionSetID, actionID, payload }) =
     const result = callAction({
       responder: reducer,
       type: ACTION_TYPE,
-      initialValue: states[resourceID],
+      initialState: states[resourceID],
       props,
       payload,
       notFoundValue,
