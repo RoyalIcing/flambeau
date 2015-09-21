@@ -69,7 +69,7 @@ programming languages.
 
 Reducers implement introspection methods, returning results from within its
 state. This completely encapsulates the specifics of the state’s structure.
-Unlike the use of Redux’s `getState`, action creators are never tied to a
+Unlike the use of Redux’s `getState()`, action creators are never tied to a
 particular reducer.
 
 Declaring introspection methods:
@@ -80,8 +80,9 @@ export const introspection = {
 };
 ```
 
-Introspection methods can then be called within an asynchronous action creator
-by using the `getConsensus` function.
+Introspection is detailed more, with examples, within the
+[reducers](reducers.md#introspection)
+section.
 
 ---
 

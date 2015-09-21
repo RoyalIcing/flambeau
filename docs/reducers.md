@@ -95,18 +95,19 @@ export const TodoItemActions = {
 
 ## Introspection
 
-Introspection allows different actions to be taken depending on the store’s
-state. The difference from the normal method (`getState()` in Redux) of checking
-the store is an interface is created that the reducers implement to the
-specifics of its state’s structure. It is completely encapsulated within the
-reducer, allowing better coupling between actions and reducers.
+An application will often need different actions to be taken depending on the
+store’s state. Differing from the normal method of directly checking the store
+(`getState()` in Redux), Flambeau introduces *introspection* methods, which
+allow reducers to completely encapsulate the specifics of its state’s structure.
 
-Say a todo list allows importing items from online. The action creator may want
-to only load data if it hasn’t done so already. Because action creators are
-stateless, this bit of information will be stored in a reducer’s state somewhere.
-Introspection methods allow a reducer to declare its preference, say with
-needing to load data, whilst leaving the implementation details of the store
-hidden from the action creator.
+Say a todo list allows importing items from a URL online. The import action
+creator may want to only load data if it hasn’t been done already. Because
+action creators are stateless, this bit of information will be stored by a
+reducer somewhere.
+
+Introspection methods allow a reducer to declare its preference, say whether to
+load a URL or not, whilst leaving the implementation details of the store’s
+state hidden from the action creator.
 
 ```javascript
 // TodoListActions.js
