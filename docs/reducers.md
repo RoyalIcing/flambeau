@@ -118,7 +118,7 @@ export function addTodosFromURL({ items, URL }) {}
 function importTodosFromURL({ URL }, { currentActionSet }) {
   fetch(URL)
   .then(response => response.json())
-  .then(items => currentActionSet.addTodosFromURL({ items }));
+  .then(items => currentActionSet.addTodosFromURL({ items, URL }));
 }
 
 export function importTodosFromURLIfNeeded({ URL }, { currentActionSet, getConsensus }) {
