@@ -96,15 +96,17 @@ export const TodoItemActions = {
 ## Introspection
 
 Introspection allows different actions to be taken depending on the store’s
-state. The difference from the normal method of directly checking the store is
-an interface is created that the reducers implement to the specifics of its
-state’s structure. It is completely encapsulated within the reducer, allowing
-better coupling between actions and reducers.
+state. The difference from the normal method (`getState()` in Redux) of checking
+the store is an interface is created that the reducers implement to the
+specifics of its state’s structure. It is completely encapsulated within the
+reducer, allowing better coupling between actions and reducers.
 
 Say a todo list allows importing items from online. The action creator may want
-to only load data if its hasn’t already. Because action creators are stateless,
-this bit of information will be stored in a reducer somewhere. Introspection
-methods allow this to be declared by an action set.
+to only load data if it hasn’t done so already. Because action creators are
+stateless, this bit of information will be stored in a reducer’s state somewhere.
+Introspection methods allow a reducer to declare its preference, say with
+needing to load data, whilst leaving the implementation details of the store
+hidden from the action creator.
 
 ```javascript
 // TodoListActions.js
