@@ -20,7 +20,7 @@ export default ({ resources, states }) => ({ actionSetID }) => ({ introspectionI
     const currentValue = callAction({
       responder: reducer,
       type: INTROSPECTION_TYPE,
-      initialValue: states[resourceID],
+      initialState: states[resourceID],
       props,
       actionID: introspectionID,
       actionSetID,
