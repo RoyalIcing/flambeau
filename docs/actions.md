@@ -21,9 +21,9 @@ way, then return the customized payload you would like.
 
 e.g.
 ```javascript
-export function addTodo({ text }) {}
+export function addTodo({ text }) {} // Payload as-is
 
-export function addTodoWithCurrentDate({ text }) {
+export function addTodoWithCurrentDate({ text }) { // Payload transformed
   return {
     dateCreated: new Date(),
     text
@@ -52,12 +52,12 @@ or `allActionSets.myActionSetID.myActionID(payload)`.
 import fetch from 'isomorphic-fetch';
 
 export function addTodo({ text }) {}
-export function addTodosFromURL({ items }) {}
+export function addTodosFromURL({ items, URL }) {}
 
 export function importTodosFromURL({ URL }, { currentActionSet, allActionSets }) {
   fetch(URL)
   .then(response => response.json())
-  .then(items => currentActionSet.addTodosFromURL({ items }));
+  .then(items => currentActionSet.addTodosFromURL({ items, URL }));
 }
 ```
 
