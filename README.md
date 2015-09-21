@@ -20,7 +20,15 @@ Just use an exported function to name the action, and a destructured object to d
 
 `npm install flambeau --save`
 
-## Actions
+## Documentation
+
+- [Actions](docs/actions.md)
+- [Reducers](docs/reducers.md)
+- [Using with Redux](docs/redux.md)
+
+## Example
+
+### Actions
 
 ```javascript
 // actions/TodoListActions.js
@@ -43,7 +51,7 @@ export function importTodosFromURL({ URL }, { currentActionSet }) {
 }
 ```
 
-## Reducer
+### Reducer
 
 ```javascript
 // reducers/TodoListReducer.js
@@ -60,7 +68,7 @@ export const TodoListActions = {
 }
 ```
 
-## Using with Redux
+### Using with Redux
 
 ```javascript
 import { createStore, applyMiddleware } from 'redux';
@@ -77,7 +85,7 @@ export const store = createStoreWithMiddleware(rootReducer, initialState);
 export const connectedActionSets = connectActionSetsToStore({ actionSets, store });
 ```
 
-## Introspection
+### Introspection
 
 Introspection with the `getConsensus()` function allows actions to request data from reducers whilst keeping them completely decoupled. Action creators have no knowledge of the specifics of reducers’ state.
 
