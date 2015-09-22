@@ -3,6 +3,7 @@ import dispatch from './dispatch';
 import getConsensus from './getConsensus';
 import connectActionSets from './connectActionSets';
 
+const FLAMBEAU_ACTION_TYPE = 'flambeau';
 
 export function createRootReducer({ reducers, idToProps }) {
   const { resources, states } = createResourcesFromReducers({ reducers, idToProps });
@@ -11,7 +12,7 @@ export function createRootReducer({ reducers, idToProps }) {
   });
 
   return (state = initialState, action) => {
-    if (action.actionSetID && action.actionID && action.payload) {
+    if (action.type === FLAMBEAU_ACTION_TYPE && action.actionSetID && action.actionID && action.payload) {
       const changedStates = dispatch({ resources: state._resources, states: state })(action);
 
       return Object.assign({}, state, changedStates);
@@ -27,7 +28,7 @@ export function connectActionSetsToStore({ actionSets, store }) {
     dispatch: (payload) => {
       store.dispatch(
         Object.assign({
-          type: 'flambeau'
+          type: FLAMBEAU_ACTION_TYPE
         }, payload)
       );
     },
