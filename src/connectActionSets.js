@@ -29,11 +29,11 @@ function getConnectedActionSet({ actionSet, actionSetID, getAllConnectedActionSe
         if (typeof result !== 'undefined') {
           payload = result;
         }
-        dispatch({ actionSetID, actionID, payload });
+        return dispatch({ actionSetID, actionID, payload });
       }
       // Asychronous, delegates the dispatching
       else {
-        sourceActionFunction(payload, {
+        return sourceActionFunction(payload, {
           currentActionSet: connectedActionSet,
           allActionSets: getAllConnectedActionSets()
         });

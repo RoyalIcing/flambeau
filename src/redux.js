@@ -26,7 +26,7 @@ export function connectActionSetsToStore({ actionSets, store }) {
   return connectActionSets({
     actionSets,
     dispatch: (payload) => {
-      store.dispatch(
+      return store.dispatch(
         Object.assign({
           type: FLAMBEAU_ACTION_TYPE
         }, payload)
