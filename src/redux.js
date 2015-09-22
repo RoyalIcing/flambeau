@@ -32,12 +32,12 @@ export function connectActionSetsToStore({ actionSets, store }) {
         }, payload)
       );
     },
-    getConsensusForActionSet: ({ actionSetID }) => {
+    getConsensusForActionSet: (actionSetID) => {
       const state = store.getState();
       return getConsensus({
         resources: state._resources,
         states: state
-      })({ actionSetID });
+      })(actionSetID);
     }
   });
 }

@@ -2,19 +2,33 @@ import callAction from './callAction';
 import { INTROSPECTION_TYPE } from './types';
 import notFoundValue from './notFoundValue';
 
-export default ({ resources, states }) => ({ actionSetID }) => ({ introspectionID, payload, combine }) => {
-  if (combine.booleanOr) {
-    combine = (combined, current) => {
-      return combined || current;
-    };
-  }
-  else if (combine.booleanAnd) {
-    combine = (combined, current) => {
-      return combined && current;
-    };
-  }
+function consensusForReducerResults(allResults) {
+  return {
+    some(callback = Boolean) {
+      return allResults.some(callback);
+    },
 
-  const combinedValue = Object.keys(resources).reduce((combinedValue, resourceID, i) => {
+    every(callback = Boolean) {
+      return allResults.every(callback);
+    },
+
+    reduce(callback, initialValue) {
+      if (allResults.length === 0 && (typeof initialValue === 'undefined')) {
+        // Do not allow TypeError to be thrown.
+        return;
+      }
+
+      return allResults.reduce(callback, initialValue);
+    },
+
+    toArray() {
+      return allResults
+    }
+  };
+}
+
+export default ({ resources, states }) => (actionSetID) => (introspectionID) => (payload) => {
+  const allResults = Object.keys(resources).reduce((allResults, resourceID) => {
     const { reducer, props } = resources[resourceID];
 
     const currentValue = callAction({
@@ -28,22 +42,12 @@ export default ({ resources, states }) => ({ actionSetID }) => ({ introspectionI
       notFoundValue
     });
 
-    // If reducer implements this introspection method
     if (currentValue !== notFoundValue) {
-      // If combined value has not been set
-      if (combinedValue === notFoundValue) {
-        combinedValue = currentValue;
-      }
-      // If combinedValue has been set, ask it to be combined with the current value
-      else {
-        return combine(combinedValue, currentValue);
-      }
+      allResults.push(currentValue);
     }
 
-    return combinedValue;
-  }, notFoundValue);
+    return allResults;
+  }, []);
 
-  if (combinedValue !== notFoundValue) {
-    return combinedValue;
-  }
+  return consensusForReducerResults(allResults);
 }

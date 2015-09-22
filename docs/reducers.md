@@ -164,3 +164,48 @@ export const TodoListActions = {
   }
 };
 ```
+
+The `getConsensus` property is part of every connected action set, including
+those passed to action creators (`currentActionSet` and `allActionSets`), that
+have introspection methods.
+
+To use it, append your introspection identifier, and call it with the payload to
+pass to each reducer’s introspection method. Then call one of the following
+methods:
+
+- `some([callback])`: like `Array.some`, returns true if callback returns true for any reducer’s
+result.
+If a callback is not passed, then the result is treated as a boolean.
+- `every([callback])`: like `Array.every`, returns true if callback returns true for every reducer’s
+result.
+If a callback is not passed, then the result is treated as a boolean.
+- `reduce(callback[, initialValue])`: like `Array.reduce`, combines every
+reducer’s result using a callback passed the combined result so far, and the
+currently iterated reducer’s result for the introspection method.
+- `toArray()`: returns an array of results of every reducer for this
+introspection method.
+
+```javascript
+const combinedResult = currentActionSet.getConsensus.yourIntrospectionID(
+  { yourPayloadProperties: true }
+).reduce((combined, current) => {
+  // Reduce `combined` and `current`
+  return combined + current;
+}, /* optional initialValue */ 0);
+```
+
+```javascript
+if (currentActionSet.getConsensus.yourIntrospectionID(
+  { yourPayloadProperties: true }
+).some()) {
+  // Any reducer returned true.
+}
+```
+
+```javascript
+if (currentActionSet.getConsensus.yourIntrospectionID(
+  { yourPayloadProperties: true }
+).every()) {
+  // All reducers returned true.
+}
+```

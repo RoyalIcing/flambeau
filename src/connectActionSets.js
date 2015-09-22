@@ -6,16 +6,14 @@ import { INTROSPECTION_TYPE } from './types';
  * @param  {String} actionSetID The unique identifier for the action set
  * @return {Object}             The connected action functions
  */
-function getConnectedActionSet({ actionSet, actionSetID, getAllConnectedActionSets, dispatch, getConsensus }) {
+function getConnectedActionSet({ actionSet, actionSetID, getAllConnectedActionSets, dispatch, getConsensusForIntrospection }) {
   let connectedActionSet = {};
 
   Object.keys(actionSet).forEach(actionID => {
     if (actionID === INTROSPECTION_TYPE) {
       const introspectionIDs = Object.keys(actionSet[INTROSPECTION_TYPE]);
       connectedActionSet.getConsensus = introspectionIDs.reduce((consensusFunctions, introspectionID) => {
-        consensusFunctions[introspectionID] = (payload, combine) => {
-          return getConsensus({ introspectionID, payload, combine });
-        };
+        consensusFunctions[introspectionID] = getConsensusForIntrospection(introspectionID);
         return consensusFunctions;
       }, {});
       return;
@@ -37,8 +35,7 @@ function getConnectedActionSet({ actionSet, actionSetID, getAllConnectedActionSe
       else {
         sourceActionFunction(payload, {
           currentActionSet: connectedActionSet,
-          allActionSets: getAllConnectedActionSets(),
-          getConsensus
+          allActionSets: getAllConnectedActionSets()
         });
       }
     };
@@ -62,7 +59,7 @@ export default function connectActionSets({ actionSets, dispatch, getConsensusFo
         return connectedActionSets
       },
       dispatch,
-      getConsensus: getConsensusForActionSet({ actionSetID })
+      getConsensusForIntrospection: getConsensusForActionSet(actionSetID)
     });
 
     return connectedActionSets;
