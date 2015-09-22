@@ -11,6 +11,13 @@ function getConnectedActionSet({ actionSet, actionSetID, getAllConnectedActionSe
 
   Object.keys(actionSet).forEach(actionID => {
     if (actionID === INTROSPECTION_TYPE) {
+      const introspectionIDs = Object.keys(actionSet[INTROSPECTION_TYPE]);
+      connectedActionSet.getConsensus = introspectionIDs.reduce((consensusFunctions, introspectionID) => {
+        consensusFunctions[introspectionID] = (payload, combine) => {
+          return getConsensus({ introspectionID, payload, combine });
+        };
+        return consensusFunctions;
+      }, {});
       return;
     }
 
