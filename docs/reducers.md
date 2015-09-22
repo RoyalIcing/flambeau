@@ -121,12 +121,8 @@ function importTodosFromURL({ URL }, { currentActionSet }) {
   .then(items => currentActionSet.addTodosFromURL({ items, URL }));
 }
 
-export function importTodosFromURLIfNeeded({ URL }, { currentActionSet, getConsensus }) {
-  if (getConsensus({
-    introspectionID: 'hasImportedFromURL',
-    payload: { URL },
-    booleanOr: true
-  })) {
+export function importTodosFromURLIfNeeded({ URL }, { currentActionSet }) {
+  if (currentActionSet.getConsensus.hasImportedFromURL({ URL }, { booleanOr: true })) {
     // This function is not exported as a public action, instead used directly.
     importTodosFromURL({ URL }, { currentActionSet });
   }
