@@ -122,7 +122,7 @@ function importTodosFromURL({ URL }, { currentActionSet }) {
 }
 
 export function importTodosFromURLIfNeeded({ URL }, { currentActionSet }) {
-  if (currentActionSet.getConsensus.hasImportedFromURL({ URL }, { booleanOr: true })) {
+  if (currentActionSet.getConsensus.hasImportedFromURL({ URL }).some()) {
     // This function is not exported as a public action, instead used directly.
     importTodosFromURL({ URL }, { currentActionSet });
   }
@@ -164,6 +164,8 @@ export const TodoListActions = {
   }
 };
 ```
+
+## Introspection Consensus
 
 The `getConsensus` property is part of every connected action set, including
 those passed to action creators (`currentActionSet` and `allActionSets`), that
