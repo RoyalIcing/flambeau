@@ -1,6 +1,6 @@
 {
   "name": "flambeau",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "description": "Lightweight flux library",
   "scripts": {
     "build": "babel src --out-dir lib",
