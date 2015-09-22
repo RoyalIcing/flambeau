@@ -28,10 +28,13 @@ export default ({ resources, states }) => ({ actionSetID }) => ({ introspectionI
       notFoundValue
     });
 
+    // If reducer implements this introspection method
     if (currentValue !== notFoundValue) {
+      // If combined value has not been set
       if (combinedValue === notFoundValue) {
-        return currentValue;
+        combinedValue = currentValue;
       }
+      // If combinedValue has been set, ask it to be combined with the current value
       else {
         return combine(combinedValue, currentValue);
       }
