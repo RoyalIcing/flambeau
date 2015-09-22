@@ -122,7 +122,7 @@ function importTodosFromURL({ URL }, { currentActionSet }) {
 }
 
 export function importTodosFromURLIfNeeded({ URL }, { currentActionSet }) {
-  if (currentActionSet.getConsensus.hasImportedFromURL({ URL }).some()) {
+  if (!currentActionSet.getConsensus.hasImportedFromURL({ URL }).every()) {
     // This function is not exported as a public action, instead used directly.
     importTodosFromURL({ URL }, { currentActionSet });
   }
