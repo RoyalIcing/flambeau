@@ -4,7 +4,7 @@
  * @param  {Object} reducers An object mapping identifiers to reducer function sets
  * @param  {Object} idToProps    (Optional) the unique attributes for each particular reducer
  */
-export default function({ reducers, idToProps }) {
+export default function({ reducers, idToProps = {} }) {
   let resources = {};
   let states = {};
 
