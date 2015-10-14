@@ -21,7 +21,7 @@ function getConnectedActionSet({ actionSet, actionSetID, getAllConnectedActionSe
 
     const sourceActionFunction = actionSet[actionID];
 
-    connectedActionSet[actionID] = (payload) => {
+    connectedActionSet[actionID] = (payload = {}) => {
       // Synchronous, immediately dispatched
       if (sourceActionFunction.length <= 1) {
         const result = sourceActionFunction(payload);
