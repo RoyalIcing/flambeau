@@ -1,28 +1,20 @@
-## Improve getConsensus API
+## Allow reducers to emit custom events
+
+Events are not stored anywhere, only transmitted and listened to by those who
+wish to subscribe.
 
 ```javascript
-export function fetchPostsIfNeeded({ reddit }, { currentActionSet, getConsensus }) {
-  if (getConsensus(currentActionSet.introspection.shouldFetchPosts, {
-    payload: { reddit },
-    booleanOr: true
-  })) {
-    fetchPosts({ reddit }, { currentActionSet });
-  };
-}
-```
+export const events = {
+  blockCannotJoinWithPrevious({ index })
+};
 
-```javascript
-export function fetchPostsIfNeeded({ reddit }, { currentActionSet }) {
-  if (currentActionSet.getConsensus.shouldFetchPosts({ reddit }, { booleanOr: true })) {
-    fetchPosts({ reddit }, { currentActionSet });
-  };
-}
-```
 
-```javascript
-export function fetchPostsIfNeeded({ reddit }, { currentActionSet }) {
-  if (currentActionSet.getConsensus.shouldFetchPosts({ reddit }, (combined = false, current) => { combined || current })) {
-    fetchPosts({ reddit }, { currentActionSet });
-  };
+export function joinBlockWithPrevious(state, { index }, { emit }) {
+  if (index === 0) {
+    emit.blockCannotJoinWithPrevious({ index });
+    return;
+  }
+
+  // ...
 }
 ```
