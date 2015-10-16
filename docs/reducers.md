@@ -66,7 +66,11 @@ export function changeCompleted({ isCompleted, index }) {}
 // TodoListReducer.js
 import TodoItemReducer from './TodoItemReducer';
 
-export function getInitialState() { return []; }
+export function getInitialState() {
+  return {
+    items: []
+  };
+}
 
 export function TodoItemActions(state, { type, actionID, payload, props, forwardTo }) {
   const { index } = payload;
