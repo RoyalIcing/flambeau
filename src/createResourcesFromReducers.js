@@ -11,13 +11,11 @@ export default function({ reducers, idToProps = {} }) {
   let states = {};
 
   Object.keys(reducers).forEach(id => {
-    const resource = {
-      reducer: reducers[id],
-      props: idToProps[id]
-    };
+    const reducer = reducers[id];
+    const props = idToProps[id];
 
-    resources[id] = resource;
-    states[id] = resource.reducer[GET_INITIAL_STATE](resource.props);
+    resources[id] = { reducer, props };
+    states[id] = reducer[GET_INITIAL_STATE](props);
   });
 
   return { resources, states };
