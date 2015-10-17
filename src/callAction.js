@@ -17,7 +17,7 @@ function findActionResponder({ responder, type, actionSetID, actionID, notFoundV
   if (responder[actionSetID]) {
     // Has forwarding function for entire type
     if (isFunction(responder[actionSetID])) {
-      return (initialState, payload, props) => {
+      return (initialState, payload, { props }) => {
         function forwardTo({ responder, initialState, props = {}, sourceResponder }) {
           let responseNotFoundValue;
           if (type === ACTION_TYPE) {
@@ -46,9 +46,11 @@ function findActionResponder({ responder, type, actionSetID, actionID, notFoundV
     }
     else {
       let typeResponder;
+      // Actions are direct children
       if (type === ACTION_TYPE) {
         typeResponder = responder[actionSetID];
       }
+      // Others are grouped, such as introspection
       else if (responder[actionSetID][type]) {
         typeResponder = responder[actionSetID][type];
       }
