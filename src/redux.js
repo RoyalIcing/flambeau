@@ -2,8 +2,7 @@ import createResourcesFromReducers from './createResourcesFromReducers';
 import dispatch from './dispatch';
 import getConsensus from './getConsensus';
 import connectActionSets from './connectActionSets';
-
-const FLAMBEAU_ACTION_TYPE = 'flambeau';
+import { FLAMBEAU_ACTION_TYPE } from './types';
 
 export function createRootReducer({ reducers, idToProps }) {
   const { resources, states } = createResourcesFromReducers({ reducers, idToProps });
@@ -13,29 +12,23 @@ export function createRootReducer({ reducers, idToProps }) {
 
   return (state = initialState, action) => {
     if (action.type === FLAMBEAU_ACTION_TYPE && action.actionSetID && action.actionID && action.payload) {
-      const changedStates = dispatch({ resources: state._resources, states: state })(action);
+      const changedStates = dispatch({ resources, states: state })(action);
 
       return Object.assign({}, state, changedStates);
     }
 
     return state;
-  }
+  };
 }
 
-export function connectActionSetsToStore({ actionSets, store }) {
+export function connectActionSetsToStore({ actionSets, store: { dispatch, getState } }) {
   return connectActionSets({
     actionSets,
-    dispatch: (payload) => {
-      return store.dispatch(
-        Object.assign({
-          type: FLAMBEAU_ACTION_TYPE
-        }, payload)
-      );
-    },
+    dispatch,
     getConsensusForActionSet: (actionSetID) => {
       return getConsensus({
-        resources: store.getState()._resources,
-        getStates: store.getState
+        resources: getState()._resources,
+        getStates: getState
       })(actionSetID);
     }
   });

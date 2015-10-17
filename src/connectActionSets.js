@@ -1,4 +1,4 @@
-import { INTROSPECTION_TYPE } from './types';
+import { INTROSPECTION_TYPE, FLAMBEAU_ACTION_TYPE } from './types';
 
 /**
  * Get a set of actions, connected to this store ready to dispatch to the reducers.
@@ -33,7 +33,7 @@ function getConnectedActionSet({ actionSet, actionSetID, getAllConnectedActionSe
         if (typeof result !== 'undefined') {
           payload = result;
         }
-        return dispatch({ actionSetID, actionID, payload });
+        return dispatch({ type: FLAMBEAU_ACTION_TYPE, actionSetID, actionID, payload });
       }
       // Asychronous, delegates the dispatching
       else {
