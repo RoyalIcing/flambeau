@@ -56,7 +56,7 @@ export default function combineReducers(reducers, { getPropsByID = () => ({}), a
 						// Use customized response, if one was given.
 						const response = forwardTo({
 							responder: alsoResponder,
-							initialState: newState,
+							initialState,
 							props: {
 								props,
 								propsByID
@@ -69,14 +69,18 @@ export default function combineReducers(reducers, { getPropsByID = () => ({}), a
 						}
 					}
 
-					// Use first reducer that responds.
-					return reducerIDs.find((state, reducerID) =>
-						forwardTo({
+          // Use first reducer that responds.
+					let response;
+					reducerIDs.some(reducerID => {
+						response = forwardTo({
 							responder: reducers[reducerID],
 							initialState: initialState[reducerID],
-							props: propsByID[reducerID]
-						})
-					);
+							props: idToProps[reducerID]
+						});
+
+						return typeof response !== 'undefined';
+					});
+					return response;
 				}
 			}
 
