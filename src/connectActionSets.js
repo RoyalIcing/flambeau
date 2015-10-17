@@ -7,7 +7,11 @@ import { INTROSPECTION_TYPE } from './types';
  * @return {Object}             The connected action functions
  */
 function getConnectedActionSet({ actionSet, actionSetID, getAllConnectedActionSets, dispatch, getConsensusForIntrospection }) {
-  let connectedActionSet = {};
+  let connectedActionSet = {
+    getConsensus() {
+      throw "This action set has no introspection methods, maybe you have a typo.";
+    }
+  };
 
   Object.keys(actionSet).forEach(actionID => {
     if (actionID === INTROSPECTION_TYPE) {
