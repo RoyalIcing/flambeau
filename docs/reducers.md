@@ -192,26 +192,26 @@ currently iterated reducer’s result for the introspection method.
 introspection method.
 
 ```javascript
-const combinedResult = currentActionSet.getConsensus.yourIntrospectionID(
-  { yourPayloadProperties: true }
-).reduce((combined, current) => {
+const combinedResult = currentActionSet.getConsensus.yourIntrospectionID({
+  yourPayloadProperties: true
+}).reduce((combined, current) => {
   // Reduce `combined` and `current`
   return combined + current;
 }, /* optional initialValue */ 0);
 ```
 
 ```javascript
-if (currentActionSet.getConsensus.yourIntrospectionID(
-  { yourPayloadProperties: true }
-).some()) {
+if (currentActionSet.getConsensus.yourIntrospectionID({
+  yourPayloadProperties: true
+}).some()) {
   // Any reducer returned true.
 }
 ```
 
 ```javascript
-if (currentActionSet.getConsensus.yourIntrospectionID(
-  { yourPayloadProperties: true }
-).every()) {
+if (currentActionSet.getConsensus.yourIntrospectionID({
+  yourPayloadProperties: true
+}).every()) {
   // All reducers returned true.
 }
 ```
