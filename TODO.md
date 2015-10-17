@@ -12,9 +12,22 @@ export const events = {
 export function joinBlockWithPrevious(state, { index }, { emit }) {
   if (index === 0) {
     emit.blockCannotJoinWithPrevious({ index });
-    return;
   }
 
   // ...
 }
+```
+
+## Declarative way to combine reducers?
+
+```javascript
+export default {
+  combine: {
+    byId,
+    visibleIds
+  },
+  usingWhole: (whole) => ({
+
+  })
+};
 ```
