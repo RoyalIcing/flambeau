@@ -27,7 +27,7 @@ function consensusForReducerResults(allResults) {
       }
       else {
         throw (
-          "`.singleton()` requires that only one reducer responds to this introspection method."
+          "`.singleton()` requires that only one reducer responds to this introspection method. "
           + `${allResults.length} actually responded.`
         );
       }
