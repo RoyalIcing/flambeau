@@ -1,6 +1,13 @@
 import { GET_INITIAL_STATE } from './types';
 
 
+/**
+ * Combines several Flambeau reducers into one, taking care of introspection
+ *
+ * @param  {Object} reducers                The reducers to be combined together, using the keys to inform the state’s structure
+ * @param  {-> Object} getPropsByID(props)  A function returning the props for each individual reducer. It is passed the combined reducer’s props.
+ * @return {Flambeau Reducer}               A new reducer combining those that were passed
+ */
 export default function combineReducers(reducers, { getPropsByID = () => ({}), alsoAdd } = {}) {
 	let alsoResponder;
 	const reducerIDs = Object.keys(reducers);
