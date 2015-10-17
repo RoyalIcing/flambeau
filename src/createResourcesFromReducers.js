@@ -1,3 +1,5 @@
+import { GET_INITIAL_STATE } from './types';
+
 /**
  * Attach multiple reducers, with ids as keys and reducer function sets as values.
  *
@@ -15,7 +17,7 @@ export default function({ reducers, idToProps = {} }) {
     };
 
     resources[id] = resource;
-    states[id] = resource.reducer.getInitialState(resource.props);
+    states[id] = resource.reducer[GET_INITIAL_STATE](resource.props);
   });
 
   return { resources, states };
