@@ -18,7 +18,7 @@ function findActionResponder({ responder, type, actionSetID, actionID, notFoundV
     // Has forwarding function for entire type
     if (isFunction(responder[actionSetID])) {
       return (initialState, payload, props) => {
-        function forwardTo({ responder, initialState }) {
+        function forwardTo({ responder, initialState, props = {} }) {
           return callAction({
             notFoundValue: initialState,
             responder, type, initialState, actionSetID, actionID, payload, props
