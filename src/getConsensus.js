@@ -27,7 +27,7 @@ function consensusForReducerResults(allResults) {
   };
 }
 
-export default ({ resources, states }) => (actionSetID) => (introspectionID) => (payload) => {
+export default ({ resources, states }) => (actionSetID) => (introspectionID) => (payload = {}) => {
   const allResults = Object.keys(resources).reduce((allResults, resourceID) => {
     const { reducer, props } = resources[resourceID];
 
