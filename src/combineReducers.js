@@ -1,7 +1,7 @@
 import { GET_INITIAL_STATE } from './types';
 
 
-export default function combineReducers(reducers, { getPropsByID = () => {}, alsoAdd } = {}) {
+export default function combineReducers(reducers, { getPropsByID = () => ({}), alsoAdd } = {}) {
 	let alsoResponder;
 	const reducerIDs = Object.keys(reducers);
 
