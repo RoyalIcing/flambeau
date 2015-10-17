@@ -19,8 +19,13 @@ function findActionResponder({ responder, type, actionSetID, actionID, notFoundV
     if (isFunction(responder[actionSetID])) {
       return (initialState, payload, props) => {
         function forwardTo({ responder, initialState, props = {} }) {
-          return callAction({
-            notFoundValue: initialState,
+          let responseNotFoundValue;
+          if (type === ACTION_TYPE) {
+            responseNotFoundValue = initialState;
+          }
+
+          const response = callAction({
+            notFoundValue: responseNotFoundValue,
             responder, type, initialState, actionSetID, actionID, payload, props
           });
         }
