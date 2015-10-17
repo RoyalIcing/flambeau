@@ -1,7 +1,7 @@
 ## Allow reducers to emit custom events
 
-Events are not stored anywhere, only transmitted and listened to by those who
-wish to subscribe.
+Events are global, are not stored anywhere only transmitted, and listened to by
+those who wish to subscribe.
 
 ```javascript
 export const events = {
@@ -26,7 +26,7 @@ export default {
     byId,
     visibleIds
   },
-  usingWhole: (whole) => ({
+  alsoAdd: (combined) => ({
 
   })
 };
