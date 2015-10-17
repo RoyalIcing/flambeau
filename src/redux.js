@@ -33,10 +33,9 @@ export function connectActionSetsToStore({ actionSets, store }) {
       );
     },
     getConsensusForActionSet: (actionSetID) => {
-      const state = store.getState();
       return getConsensus({
-        resources: state._resources,
-        states: state
+        resources: store.getState()._resources,
+        getStates: store.getState
       })(actionSetID);
     }
   });
