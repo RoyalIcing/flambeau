@@ -190,6 +190,8 @@ reducer’s result using a callback passed the combined result so far, and the
 currently iterated reducer’s result for the introspection method.
 - `toArray()`: returns an array of results of every reducer for this
 introspection method.
+- `singleton()`: expects there to be only one reducer, returning its result.
+Throws an exception if zero or more than one reducer responded.
 
 ```javascript
 const combinedResult = currentActionSet.getConsensus.yourIntrospectionID({

@@ -21,6 +21,18 @@ function consensusForReducerResults(allResults) {
       return allResults.reduce(callback, initialValue);
     },
 
+    singleton() {
+      if (allResults.length === 1) {
+        return allResults[0];
+      }
+      else {
+        throw (
+          "`.singleton()` requires that only one reducer responds to this introspection method."
+          + `${allResults.length} actually responded.`
+        );
+      }
+    },
+
     toArray() {
       return allResults
     }
