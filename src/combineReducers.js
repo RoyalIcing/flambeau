@@ -21,28 +21,56 @@ export default function combineReducers(reducers, { idToProps = {}, alsoAdd } = 
       return actionSetHandlers;
     }
 
-    actionSetHandlers[property] = (initialState, { actionID, forwardTo }) => {
-      let newState = Object.keys(reducers).reduce((state, reducerID) => {
-        state[reducerID] = forwardTo({
-          responder: reducers[reducerID],
-          initialState: initialState[reducerID],
-          props: idToProps[reducerID]
-        });
-        return state;
-      }, {});
+    actionSetHandlers[property] = (initialState, { isAction, isIntrospection, forwardTo }) => {
+      if (isAction) {
+        let newState = Object.keys(reducers).reduce((state, reducerID) => {
+          state[reducerID] = forwardTo({
+            responder: reducers[reducerID],
+            initialState: initialState[reducerID],
+            props: idToProps[reducerID]
+          });
+          return state;
+        }, {});
 
-      if (alsoResponder) {
-				newState = forwardTo({
-					responder: alsoResponder,
-					initialState: newState,
-					props: {
-						idToProps,
-						combinedReducer
+        if (alsoResponder) {
+  				newState = forwardTo({
+  					responder: alsoResponder,
+  					initialState: newState,
+  					props: {
+  						idToProps,
+  						combinedReducer
+  					}
+  				});
+  			}
+
+        return newState;
+      }
+      else if (isIntrospection) {
+				if (alsoResponder) {
+					// Use customized response, if one was given.
+					const response = forwardTo({
+						responder: alsoResponder,
+						initialState: newState,
+						props: {
+							idToProps,
+							combinedReducer
+						}
+					});
+
+					if (response) {
+						return response;
 					}
-				});
-			}
+				}
 
-      return newState;
+				// Use first reducer that responds.
+				return Object.keys(reducers).find((state, reducerID) =>
+					forwardTo({
+						responder: reducers[reducerID],
+						initialState: initialState[reducerID],
+						props: idToProps[reducerID]
+					})
+				);
+			}
     }
 
     return actionSetHandlers;
