@@ -52,10 +52,9 @@ export default class Flambeau {
         });
       },
       getConsensusForActionSet: getConsensus({
-          resources: this.resources,
-          getStates: () => this.states
-        });
-      }
+        resources: this.resources,
+        getStates: () => this.states
+      })
     });
   }
 
