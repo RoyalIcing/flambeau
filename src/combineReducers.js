@@ -75,7 +75,7 @@ export default function combineReducers(reducers, { getPropsByID = () => ({}), a
 						response = forwardTo({
 							responder: reducers[reducerID],
 							initialState: initialState[reducerID],
-							props: idToProps[reducerID]
+							props: propsByID[reducerID]
 						});
 
 						return typeof response !== 'undefined';
