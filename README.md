@@ -43,6 +43,7 @@ export function getInitialState({ initialItems = [] }) {
 - [Reducers](docs/reducers.md)
 - [Using with Redux](docs/redux.md)
 
-## Example
+## Examples
 
-See the [async redux demo example](examples/async-redux) for a full example of introspection and the features of Flambeau.
+- See the [async redux demo example](examples/async-redux) for a full example of introspection and the features of Flambeau.
+- The great [flux-comparison](https://github.com/voronianski/flux-comparison) project has a [Redux + Flambeau example](https://github.com/voronianski/flux-comparison/tree/master/redux-flambeau).
