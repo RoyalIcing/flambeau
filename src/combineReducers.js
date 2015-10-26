@@ -33,27 +33,32 @@ export default function combineReducers(reducers, { getPropsByID = () => ({}), a
 			}
 
 			actionSetHandlers[property] = (initialState, { isAction, isIntrospection, props, forwardTo }) => {
+        function forwardToReducerWithID(reducerID) {
+          return forwardTo({
+            responder: reducers[reducerID],
+            initialState: initialState[reducerID],
+            props: propsByID[reducerID]
+          });
+        }
+
+        function forwardToAlsoResponder(initialState) {
+          return forwardTo({
+            responder: alsoResponder,
+            initialState,
+            props,
+            sourceResponder: combinedReducer
+          });
+        }
+
 				const propsByID = getPropsByID(props);
 				if (isAction) {
 					let newState = reducerIDs.reduce((state, reducerID) => {
-						state[reducerID] = forwardTo({
-							responder: reducers[reducerID],
-							initialState: initialState[reducerID],
-							props: propsByID[reducerID]
-						});
+						state[reducerID] = forwardToReducerWithID(reducerID);
 						return state;
 					}, {});
 
 					if (alsoResponder) {
-						newState = forwardTo({
-							responder: alsoResponder,
-							initialState: newState,
-							props: {
-								props,
-								propsByID
-							},
-							sourceResponder: combinedReducer
-						});
+            newState = forwardToAlsoResponder(newState);
 					}
 
 					return newState;
@@ -61,33 +66,25 @@ export default function combineReducers(reducers, { getPropsByID = () => ({}), a
 				else if (isIntrospection) {
 					if (alsoResponder) {
 						// Use customized response, if one was given.
-						const response = forwardTo({
-							responder: alsoResponder,
-							initialState,
-							props: {
-								props,
-								propsByID
-							},
-							sourceResponder: combinedReducer
-						});
-
+						const response = forwardToAlsoResponder(initialState);
 						if (response) {
-							return response;
+							// Ensure is array.
+							return [].concat(response);
 						}
 					}
 
           // Use first reducer that responds.
-					let response;
-					reducerIDs.some(reducerID => {
-						response = forwardTo({
-							responder: reducers[reducerID],
-							initialState: initialState[reducerID],
-							props: propsByID[reducerID]
-						});
-
-						return typeof response !== 'undefined';
-					});
-					return response;
+					return reducerIDs.reduce((responses, reducerID) => {
+						const response = forwardToReducerWithID(reducerID);
+						if (typeof response === 'undefined') {
+							return responses;
+						}
+						else {
+							// Appends the response.
+							// Response types of array are shallow flat mapped.
+							return responses.concat(response);
+						}
+					}, []);
 				}
 			}
 

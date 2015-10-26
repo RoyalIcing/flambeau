@@ -2,7 +2,7 @@ import callAction from './callAction';
 import { INTROSPECTION_TYPE } from './types';
 import notFoundValue from './notFoundValue';
 
-function consensusForReducerResults(allResults) {
+export function consensusForResults(allResults) {
   return {
     some(callback = Boolean) {
       return allResults.some(callback);
@@ -39,28 +39,19 @@ function consensusForReducerResults(allResults) {
   };
 }
 
-export default ({ resources, getStates }) => (actionSetID) => (introspectionID) => (payload = {}) => {
-  const states = getStates();
-  const allResults = Object.keys(resources).reduce((allResults, resourceID) => {
-    const { reducer, props } = resources[resourceID];
+export default ({ responder, props, state, actionSetID, introspectionID, payload = {} }) => {
+  let allResults = callAction({
+    responder,
+    type: INTROSPECTION_TYPE,
+    initialState: state,
+    props,
+    actionID: introspectionID,
+    actionSetID,
+    payload,
+    notFoundValue: []
+  });
 
-    const currentValue = callAction({
-      responder: reducer,
-      type: INTROSPECTION_TYPE,
-      initialState: states[resourceID],
-      props,
-      actionID: introspectionID,
-      actionSetID,
-      payload,
-      notFoundValue
-    });
-
-    if (currentValue !== notFoundValue) {
-      allResults.push(currentValue);
-    }
-
-    return allResults;
-  }, []);
-
-  return consensusForReducerResults(allResults);
+  // Ensure is an array
+  allResults = [].concat(allResults);
+  return consensusForResults(allResults);
 }

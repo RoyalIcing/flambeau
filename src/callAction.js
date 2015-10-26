@@ -1,5 +1,5 @@
 import isFunction from './isFunction';
-import { ACTION_TYPE, INTROSPECTION_TYPE } from './types';
+import { ACTION_TYPE, INTROSPECTION_TYPE, INTROSPECTION_PROPERTY } from './types';
 
 
 export default function callAction({ responder, type, initialState, actionSetID, actionID, payload, notFoundValue, props, sourceResponder }) {
@@ -51,8 +51,8 @@ function findActionResponder({ responder, type, actionSetID, actionID, notFoundV
         typeResponder = responder[actionSetID];
       }
       // Others are grouped, such as introspection
-      else if (responder[actionSetID][type]) {
-        typeResponder = responder[actionSetID][type];
+      else if (type === INTROSPECTION_TYPE) {
+        typeResponder = responder[actionSetID][INTROSPECTION_PROPERTY];
       }
       else {
         return notFoundValue;
