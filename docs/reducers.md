@@ -126,7 +126,7 @@ function importTodosFromURL({ URL }, { currentActionSet }) {
 }
 
 export function importTodosFromURLIfNeeded({ URL }, { currentActionSet }) {
-  if (!currentActionSet.getConsensus.hasImportedFromURL({ URL }).every()) {
+  if (!currentActionSet.consensus.hasImportedFromURL({ URL }).every()) {
     // This function is not exported as a public action, instead used directly.
     importTodosFromURL({ URL }, { currentActionSet });
   }
@@ -171,7 +171,7 @@ export const TodoListActions = {
 
 ## Introspection Consensus
 
-The `getConsensus` property is part of every connected action set, including
+The `consensus` property is part of every connected action set, including
 those passed to action creators (`currentActionSet` and `allActionSets`), that
 have introspection methods.
 
@@ -194,7 +194,7 @@ introspection method.
 Throws an exception if zero or more than one reducer responded.
 
 ```javascript
-const combinedResult = currentActionSet.getConsensus.yourIntrospectionID({
+const combinedResult = currentActionSet.consensus.yourIntrospectionID({
   yourPayloadProperties: true
 }).reduce((combined, current) => {
   // Reduce `combined` and `current`
@@ -203,7 +203,7 @@ const combinedResult = currentActionSet.getConsensus.yourIntrospectionID({
 ```
 
 ```javascript
-if (currentActionSet.getConsensus.yourIntrospectionID({
+if (currentActionSet.consensus.yourIntrospectionID({
   yourPayloadProperties: true
 }).some()) {
   // Any reducer returned true.
@@ -211,7 +211,7 @@ if (currentActionSet.getConsensus.yourIntrospectionID({
 ```
 
 ```javascript
-if (currentActionSet.getConsensus.yourIntrospectionID({
+if (currentActionSet.consensus.yourIntrospectionID({
   yourPayloadProperties: true
 }).every()) {
   // All reducers returned true.
