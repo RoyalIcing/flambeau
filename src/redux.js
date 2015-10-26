@@ -1,20 +1,37 @@
 import createResourcesFromReducers from './createResourcesFromReducers';
-import dispatch from './dispatch';
+import combineReducers from './combineReducers';
+import callAction from './callAction';
 import getConsensus from './getConsensus';
 import connectActionSets from './connectActionSets';
-import { FLAMBEAU_ACTION_TYPE } from './types';
+import { ACTION_TYPE, INTROSPECTION_TYPE } from './types';
+
+const GET_CONSENSUS_TYPE = 'flambeau-consensus';
+let latestConsensus;
 
 export function createRootReducer({ reducers, idToProps }) {
-  const { resources, states } = createResourcesFromReducers({ reducers, idToProps });
-  const initialState = Object.assign(states, {
-    _resources: resources
-  });
+  const reducer = combineReducers(reducers, { getPropsByID: () => idToProps });
 
-  return (state = initialState, action) => {
-    if (action.type === FLAMBEAU_ACTION_TYPE && action.actionSetID && action.actionID && action.payload) {
-      const changedStates = dispatch({ resources, states: state })(action);
-
-      return Object.assign({}, state, changedStates);
+  return (state = reducer.getInitialState(), action) => {
+    if (action.type === ACTION_TYPE) {
+      return callAction({
+        responder: reducer,
+        type: ACTION_TYPE,
+        initialState: state,
+        notFoundValue: state,
+        payload: action.payload,
+        actionSetID: action.actionSetID,
+        actionID: action.actionID
+      });
+    }
+    else if (action.type === GET_CONSENSUS_TYPE) {
+      latestConsensus = getConsensus({
+        responder: reducer,
+        props: {},
+        state: action.state,
+        actionSetID: action.actionSetID,
+        introspectionID: action.introspectionID,
+        payload: action.payload
+      });
     }
 
     return state;
@@ -25,11 +42,10 @@ export function connectActionSetsToStore({ actionSets, store: { dispatch, getSta
   return connectActionSets({
     actionSets,
     dispatch,
-    getConsensusForActionSet: (actionSetID) => {
-      return getConsensus({
-        resources: getState()._resources,
-        getStates: getState
-      })(actionSetID);
+    getConsensusForActionSet: (actionSetID) => (introspectionID) => (payload = {}) => {
+      dispatch({ type: GET_CONSENSUS_TYPE, actionSetID, introspectionID, payload, state: getState() });
+      return latestConsensus;
+      //return getState()._consensus;
     }
   });
 }
