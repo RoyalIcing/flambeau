@@ -1,4 +1,4 @@
-import { INTROSPECTION_TYPE, FLAMBEAU_ACTION_TYPE } from './types';
+import { ACTION_TYPE, INTROSPECTION_PROPERTY } from './types';
 
 /**
  * Get a set of actions, connected to this store ready to dispatch to the reducers.
@@ -7,16 +7,12 @@ import { INTROSPECTION_TYPE, FLAMBEAU_ACTION_TYPE } from './types';
  * @return {Object}             The connected action functions
  */
 function getConnectedActionSet({ actionSet, actionSetID, getAllConnectedActionSets, dispatch, getConsensusForIntrospection }) {
-  let connectedActionSet = {
-    getConsensus() {
-      throw "This action set has no introspection methods, maybe you have a typo.";
-    }
-  };
-
+  let connectedActionSet = {};
+  
   Object.keys(actionSet).forEach(actionID => {
-    if (actionID === INTROSPECTION_TYPE) {
-      const introspectionIDs = Object.keys(actionSet[INTROSPECTION_TYPE]);
-      connectedActionSet.getConsensus = introspectionIDs.reduce((consensusFunctions, introspectionID) => {
+    if (actionID === INTROSPECTION_PROPERTY) {
+      const introspectionIDs = Object.keys(actionSet[INTROSPECTION_PROPERTY]);
+      connectedActionSet.consensus = introspectionIDs.reduce((consensusFunctions, introspectionID) => {
         consensusFunctions[introspectionID] = getConsensusForIntrospection(introspectionID);
         return consensusFunctions;
       }, {});
@@ -33,7 +29,7 @@ function getConnectedActionSet({ actionSet, actionSetID, getAllConnectedActionSe
         if (typeof result !== 'undefined') {
           payload = result;
         }
-        return dispatch({ type: FLAMBEAU_ACTION_TYPE, actionSetID, actionID, payload });
+        return dispatch({ type: ACTION_TYPE, actionSetID, actionID, payload });
       }
       // Asychronous, delegates the dispatching
       else {

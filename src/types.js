@@ -1,6 +1,6 @@
-export const ACTION_TYPE = 'action';
-export const INTROSPECTION_TYPE = 'introspection';
 export const GET_INITIAL_STATE = 'getInitialState';
+export const INTROSPECTION_PROPERTY = 'introspection';
 
 // For libraries that expect a 'type' property in the payload.
-export const FLAMBEAU_ACTION_TYPE = 'flambeau';
+export const ACTION_TYPE = 'flambeau-action';
+export const INTROSPECTION_TYPE = 'flambeau-introspection';
