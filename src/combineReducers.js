@@ -68,18 +68,23 @@ export default function combineReducers(reducers, { getPropsByID = () => ({}), a
 						// Use customized response, if one was given.
 						const response = forwardToAlsoResponder(initialState);
 						if (response) {
-							return response;
+							// Ensure is array.
+							return [].concat(response);
 						}
 					}
 
           // Use first reducer that responds.
-					let response;
-					reducerIDs.some(reducerID => {
-						response = forwardToReducerWithID(reducerID);
-
-						return typeof response !== 'undefined';
-					});
-					return response;
+					return reducerIDs.reduce((responses, reducerID) => {
+						const response = forwardToReducerWithID(reducerID);
+						if (typeof response === 'undefined') {
+							return responses;
+						}
+						else {
+							// Appends the response.
+							// Response types of array are shallow flat mapped.
+							return responses.concat(response);
+						}
+					}, []);
 				}
 			}
 
