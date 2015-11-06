@@ -53,5 +53,6 @@ export default ({ responder, props, state, actionSetID, introspectionID, payload
 
   // Ensure is an array
   allResults = [].concat(allResults);
+  
   return consensusForResults(allResults);
 }
