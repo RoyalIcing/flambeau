@@ -39,7 +39,7 @@ export function consensusForResults(allResults) {
   };
 }
 
-export default ({ responder, props, state, actionSetID, introspectionID, payload = {} }) => {
+export default function getConsensus({ responder, props, state, actionSetID, introspectionID, payload = {} }) {
   let allResults = callAction({
     responder,
     type: INTROSPECTION_TYPE,
@@ -53,6 +53,6 @@ export default ({ responder, props, state, actionSetID, introspectionID, payload
 
   // Ensure is an array
   allResults = [].concat(allResults);
-  
+
   return consensusForResults(allResults);
 }
