@@ -49,7 +49,8 @@ Forwarding actions is possible, especially easily done in bulk per action set.
 To forward an action, declare an action set as a function instead of an object.
 When an action from this set is dispatched, this function will be called with
 the following parameters.
-- `type`: either ACTION_TYPE or INTROSPECTION_TYPE.
+- `isAction`: when the payload being dispatched is a standard action.
+- `isIntrospection`: when introspection into reducers is being requested.
 - `actionID`: the identifier of the action or introspection method.
 - `payload`: the payload being dispatched.
 - `props`: the props of this particular reducer.
@@ -72,14 +73,16 @@ export function getInitialState() {
   };
 }
 
-export function TodoItemActions(state, { type, actionID, payload, props, forwardTo }) {
-  const { index } = payload;
-  state = Object.assign({}, state, {
-    items: state.items.concat() // Make a copy of the entire array
-  });
-  state.items[index] = forwardTo({ responder: TodoItemReducer, initialState: state.items[index] });
+export function TodoItemActions(state, { isAction, isIntrospection, payload, props, forwardTo }) {
+  if (isAction) {
+    const { index } = payload;
+    state = Object.assign({}, state, {
+      items: state.items.slice() // Make a copy of the entire array
+    });
+    state.items[index] = forwardTo({ responder: TodoItemReducer, initialState: state.items[index] });
 
-  return state;
+    return state;
+  }
 }
 ```
 
@@ -99,10 +102,10 @@ export const TodoItemActions = {
 
 ## Introspection
 
-An application will often need different actions to be taken depending on the
+An application will often need different actions to be dispatched depending on the
 store’s state. Differing from the normal method of directly checking the store
 (`getState()` in Redux), Flambeau introduces *introspection* methods, which
-allow reducers to completely encapsulate the specifics of its state’s structure.
+allow reducers to completely encapsulate its state from the outside world.
 
 Say a todo list allows importing items from a URL online. The import action
 creator may want to only load data if it hasn’t been done already. Because
