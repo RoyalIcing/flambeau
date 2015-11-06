@@ -9,7 +9,7 @@ const GET_CONSENSUS_TYPE = 'flambeau-consensus';
 let latestConsensus;
 
 export function createRootReducer({ reducers, idToProps }) {
-  const reducer = combineReducers(reducers, { getPropsByID: () => idToProps });
+  const reducer = combineReducers(reducers, { getIDToProps: () => idToProps });
 
   return (state = reducer.getInitialState(), action) => {
     if (action.type === ACTION_TYPE) {
@@ -45,7 +45,6 @@ export function connectActionSetsToStore({ actionSets, store: { dispatch, getSta
     getConsensusForActionSet: (actionSetID) => (introspectionID) => (payload = {}) => {
       dispatch({ type: GET_CONSENSUS_TYPE, actionSetID, introspectionID, payload, state: getState() });
       return latestConsensus;
-      //return getState()._consensus;
     }
   });
 }
