@@ -4,9 +4,9 @@ import { GET_INITIAL_STATE } from './types';
 /**
  * Combines several Flambeau reducers into one, taking care of introspection
  *
- * @param  {Object} reducers                The reducers to be combined together, using the keys to inform the state’s structure
- * @param  {-> Object} getIDToProps(props)  A function returning the props for each individual reducer. It is passed the combined reducer’s props.
- * @return {Flambeau Reducer}               A new reducer combining those that were passed
+ * @param	{Object} reducers								The reducers to be combined together, using the keys to inform the state’s structure
+ * @param	{-> Object} getIDToProps(props)	A function returning the props for each individual reducer. It is passed the combined reducer’s props.
+ * @return {Flambeau Reducer}							 A new reducer combining those that were passed
  */
 export default function combineReducers(reducers, { getIDToProps = () => ({}), alsoAdd } = {}) {
 	let alsoResponder;
@@ -33,24 +33,25 @@ export default function combineReducers(reducers, { getIDToProps = () => ({}), a
 			}
 
 			actionSetHandlers[property] = (initialState, { isAction, isIntrospection, props, forwardTo }) => {
-        function forwardToReducerWithID(reducerID) {
-          return forwardTo({
-            responder: reducers[reducerID],
-            initialState: initialState[reducerID],
-            props: propsByID[reducerID]
-          });
-        }
-
-        function forwardToAlsoResponder(initialState) {
-          return forwardTo({
-            responder: alsoResponder,
-            initialState,
-            props,
-            sourceResponder: combinedReducer
-          });
-        }
-
 				const propsByID = getIDToProps(props);
+
+				function forwardToReducerWithID(reducerID) {
+					return forwardTo({
+						responder: reducers[reducerID],
+						initialState: initialState[reducerID],
+						props: propsByID[reducerID]
+					});
+				}
+
+				function forwardToAlsoResponder(initialState) {
+					return forwardTo({
+						responder: alsoResponder,
+						initialState,
+						props,
+						sourceResponder: combinedReducer
+					});
+				}
+
 				if (isAction) {
 					let newState = reducerIDs.reduce((state, reducerID) => {
 						state[reducerID] = forwardToReducerWithID(reducerID);
@@ -58,7 +59,7 @@ export default function combineReducers(reducers, { getIDToProps = () => ({}), a
 					}, {});
 
 					if (alsoResponder) {
-            newState = forwardToAlsoResponder(newState);
+						newState = forwardToAlsoResponder(newState);
 					}
 
 					return newState;
@@ -73,7 +74,7 @@ export default function combineReducers(reducers, { getIDToProps = () => ({}), a
 						}
 					}
 
-          // Use first reducer that responds.
+					// Use first reducer that responds.
 					return reducerIDs.reduce((responses, reducerID) => {
 						const response = forwardToReducerWithID(reducerID);
 						if (typeof response === 'undefined') {
