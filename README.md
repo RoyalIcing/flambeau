@@ -1,26 +1,34 @@
 # Flambeau
-A lightweight, Redux-compatible Flux library with opinions:
+Lightweight Redux enhancements with opinions:
 
 ### Declarative action creators
 - **No UPPERCASE_CONSTANTS**. Just use an exported function to name the action, and a destructured object to document the payload.
 ```javascript
-export function addTodo({ text }) {} // No constants, self-documenting payload
+export function addTodo({ text }) {} // No constants
+
+export function editTodo({ index, text }) {} // Payload is self-documenting
 ```
-- Better organized actions with **namespacing** using action sets.
+- Namespacing of actions into sets for better organization.
 - **Async action support built-in**, with convenient dispatching of other actions.
 
 ### Reusable reducers
-- **No switch statements** to handle actions, just declare a function with the same name as the action’s function, within an exported object named after the action set.
+- **No switch statements** to handle actions, just declare functions following the same structure as the action set.
 ```javascript
 export const TodoListActions = {
   addTodo(state, { text }) {
     return state.concat({ text });
+  },
+
+  editTodo(state, { index, text }) {
+    let newState = state.slice();
+    newState[index] = { text };
+    return newState;
   }
 }
 ```
-- **Redux-style reducers** instead of stores, using pure functions to allow clear data flow and immutability.
-- **Reusable reducers, using props to customize** the initial state or response to actions.
+- **Reusable reducers, using props to customize** the response to actions or initial state.
 ```javascript
+// Props are passed in as first argument:
 export function getInitialState({ initialItems = [] }) {
   return {
     items: initialItems
@@ -33,15 +41,15 @@ export function getInitialState({ initialItems = [] }) {
 - **Introspection methods to allow encapsulation** of reducers’ internal state. This removes action creators’ knowledge of the store’s structure, allowing greater code reuse.
 - Get a **consensus for async actions**, such as whether something needs loading, by polling reducers using their introspection methods.
 
-## Installation
-
-`npm install flambeau --save`
-
 ## Documentation
 
 - [Actions](docs/actions.md)
 - [Reducers](docs/reducers.md)
 - [Using with Redux](docs/redux.md)
+
+## Installation
+
+`npm install flambeau --save`
 
 ## Examples
 
