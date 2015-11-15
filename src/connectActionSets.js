@@ -8,11 +8,11 @@ import { ACTION_TYPE, INTROSPECTION_PROPERTY } from './types';
  */
 function getConnectedActionSet({ actionSet, actionSetID, getAllConnectedActionSets, dispatch, getConsensusForIntrospection }) {
   let connectedActionSet = {};
-  
+
   Object.keys(actionSet).forEach(actionID => {
     if (actionID === INTROSPECTION_PROPERTY) {
       const introspectionIDs = Object.keys(actionSet[INTROSPECTION_PROPERTY]);
-      connectedActionSet.consensus = introspectionIDs.reduce((consensusFunctions, introspectionID) => {
+      connectedActionSet.getConsensus = connectedActionSet.consensus = introspectionIDs.reduce((consensusFunctions, introspectionID) => {
         consensusFunctions[introspectionID] = getConsensusForIntrospection(introspectionID);
         return consensusFunctions;
       }, {});
