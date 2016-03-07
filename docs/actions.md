@@ -83,5 +83,7 @@ section.
 ---
 
 **[Actions](actions.md)**
+·
 [Reducers](reducers.md)
+·
 [Using with Redux](redux.md)
