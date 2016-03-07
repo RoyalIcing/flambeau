@@ -7,12 +7,16 @@ Lightweight Redux enhancements with opinions:
 export function addTodo({ text }) {} // No constants
 
 export function editTodo({ index, text }) {} // Payload is self-documenting
+
+export function completeTodo({ index }) { // Payload can be altered, otherwise defaults to the input.
+  return { index, dateCompleted: new Date() };
+}
 ```
 - Namespacing of actions into sets for better organization.
 - **Async action support built-in**, with convenient dispatching of other actions.
 
 ### Reusable reducers
-- **No switch statements** to handle actions, just declare functions following the same structure as the action set.
+- **No switch statements** to handle actions, just declare functions matching those exported by the action set.
 ```javascript
 export const TodoListActions = {
   addTodo(state, { text }) {
@@ -21,7 +25,13 @@ export const TodoListActions = {
 
   editTodo(state, { index, text }) {
     let newState = state.slice();
-    newState[index] = { text };
+    newState[index] = { ...newState[index], text };
+    return newState;
+  },
+  
+  completeTodo(state, { index, dateCompleted }) {
+    let newState = state.slice();
+    newState[index] = { ...newState[index], dateCompleted };
     return newState;
   }
 }
@@ -35,10 +45,10 @@ export function getInitialState({ initialItems = [] }) {
   };
 }
 ```
-- **Bulk forwarding of action sets** within reducers to allow easy composition of reducers, such as in collections or other hierarchies.
+- **Forward action sets in bulk** within reducers to allow easy composition of reducers, such as in collections or other hierarchies.
 
 ### Reducer state encapsulation
-- **Introspection methods to allow encapsulation** of reducers’ internal state. This removes action creators’ knowledge of the store’s structure, allowing greater code reuse.
+- **Introspection methods encapsulate** reducers’ internal state. This removes action creators’ knowledge of the store’s structure, allowing greater code reuse.
 - Get a **consensus for async actions**, such as whether something needs loading, by polling reducers using their introspection methods.
 
 ## Documentation
