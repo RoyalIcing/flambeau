@@ -37,16 +37,12 @@ Asynchronous action creators allow operations such as loading or saving to be
 encapsulated.
 These action creators forward to other actions that reducers can listen to.
 
-Simple add a second argument to your action creator, with a destructured object
-including the following optional properties:
+To make your action creator asynchronous, simple add a second argument to your action creator with a destructured object
+of the following optional properties:
 - `currentActionSet`: The action set you are currently declaring within,
-allowing you to dispatch sibling actions. Maps action identifiers to individual
-dispatcher functions.
-- `allActionSets`: All the action sets, mapping action set identifiers to sets
-of dispatcher functions.
-
-To forward to another action, use either `currentActionSet.myActionID(payload)`
-or `allActionSets.myActionSetID.myActionID(payload)`.
+allowing you to dispatch sibling actions. Maps action identifiers to each action’s
+dispatcher function. e.g. `currentActionSet.otherAction(payload)`
+- `allActionSets`: All the action sets, mapping action set identifiers to their dispatcher functions. e.g. `allActionSets.OtherActionSet.someOtherAction(payload)`
 
 ```javascript
 import fetch from 'isomorphic-fetch';
@@ -69,10 +65,10 @@ programming languages.
 
 Reducers implement introspection methods, returning results from within its
 state. This completely encapsulates the specifics of the state’s structure.
-Unlike the use of Redux’s `getState()`, action creators are never tied to a
-particular reducer.
+Unlike the use of Redux’s `getState()`, action creators have no knowledge
+of the state tree.
 
-Declaring introspection methods:
+Declare introspection methods underneath your exported actions:
 ```javascript
 export const introspection = {
   hasImportedFromURL({ URL }) {},
@@ -80,11 +76,12 @@ export const introspection = {
 };
 ```
 
-Introspection is detailed more, with examples, within the
+Introspection is explained in more detail and with examples in the
 [reducers](reducers.md#introspection)
 section.
 
 ---
 
-For information on how to respond to actions, read the [reducers](reducers.md)
-section.
+**[Actions](actions.md)**
+[Reducers](reducers.md)
+[Using with Redux](redux.md)
