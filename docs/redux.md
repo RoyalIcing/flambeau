@@ -68,6 +68,8 @@ export const idToProps = {
 
 ---
 
-For any questions or suggestions for Flambeau, please
-[file an issue](https://github.com/BurntCaramel/flambeau/issues) or email me
-(found at my [GitHub profile](https://github.com/BurntCaramel)).
+[Actions](actions.md)
+·
+[Reducers](reducers.md)
+·
+**[Using with Redux](redux.md)**

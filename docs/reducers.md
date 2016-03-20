@@ -188,13 +188,38 @@ If a callback is not passed, then the result is treated as a boolean.
 - `every([callback])`: like `Array.every`, returns true if callback returns true for every reducer’s
 result.
 If a callback is not passed, then the result is treated as a boolean.
+- `singleton()`: expects there to be only one reducer, returning its result.
+Throws an exception if zero or more than one reducer responded.
 - `reduce(callback[, initialValue])`: like `Array.reduce`, combines every
 reducer’s result using a callback passed the combined result so far, and the
 currently iterated reducer’s result for the introspection method.
 - `toArray()`: returns an array of results of every reducer for this
 introspection method.
-- `singleton()`: expects there to be only one reducer, returning its result.
-Throws an exception if zero or more than one reducer responded.
+
+```javascript
+if (currentActionSet.consensus.yourIntrospectionID({
+  yourPayloadProperties: true
+}).some()) {
+  // If any reducer returned true.
+}
+```
+
+```javascript
+if (currentActionSet.consensus.yourIntrospectionID({
+  yourPayloadProperties: true
+}).every()) {
+  // If all reducers returned true.
+}
+```
+
+```javascript
+const currentActionSet.consensus.yourIntrospectionID({
+  yourPayloadProperties: true
+}).singleton();
+// A single chosen reducer returned a value.
+// Throws if no or multiple reducers returned a result.
+// Great for configuration variables.
+```
 
 ```javascript
 const combinedResult = currentActionSet.consensus.yourIntrospectionID({
@@ -205,18 +230,10 @@ const combinedResult = currentActionSet.consensus.yourIntrospectionID({
 }, /* optional initialValue */ 0);
 ```
 
-```javascript
-if (currentActionSet.consensus.yourIntrospectionID({
-  yourPayloadProperties: true
-}).some()) {
-  // Any reducer returned true.
-}
-```
+---
 
-```javascript
-if (currentActionSet.consensus.yourIntrospectionID({
-  yourPayloadProperties: true
-}).every()) {
-  // All reducers returned true.
-}
-```
+[Actions](actions.md)
+·
+**[Reducers](reducers.md)**
+·
+[Using with Redux](redux.md)
