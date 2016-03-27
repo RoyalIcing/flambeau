@@ -15,9 +15,10 @@ UPPERCASE_CONSTANTS. Simply export a function, with its name identifying the
 action creator, and a destructured object (`{ anything, you, like }`) for the
 first argument as the payload.
 
-The body of the function can be left empty, if the payload is to be used as-is.
-Or if you would like to add other properties or transform the payload in some
-way, then return the customized payload you would like.
+If the payload is to be used as-is, then the body of the function can be left
+empty.
+If you would like to add other properties or transform the payload in some
+way, then return the customized payload you want.
 
 e.g.
 ```javascript
